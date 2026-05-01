@@ -85,6 +85,7 @@
           const [manualDiscount, setManualDiscount] = useState('');
           const [showDiscount, setShowDiscount] = useState(false);
           const [showRevenue, setShowRevenue] = useState(false);
+          const [showReceiptDetails, setShowReceiptDetails] = useState(true);
 
           const formatRupiah = (number) => {
             return new Intl.NumberFormat('id-ID', {
@@ -275,58 +276,66 @@
                   <i className="fa-solid fa-receipt absolute -right-6 -bottom-6 text-slate-700 opacity-30 text-[120px]"></i>
                   
                   <div className="relative z-10">
-                    <h2 className="text-slate-300 text-sm font-medium uppercase tracking-wider mb-4">Total Pembayaran</h2>
-                    
-                    <div className="space-y-4 mb-4">
-                      {includeMembership && (
-                        <div className="flex flex-col">
-                          <div className="flex justify-between items-center text-sm">
-                            <span className="text-slate-300">• Membership: <span className="font-medium text-white">{selectedMembership.name}</span></span>
-                            <div className="text-right flex items-center gap-2">
-                              {memGimmickDiff > 0 && <span className="text-slate-500 line-through text-xs">{formatRupiah(memMaxPrice)}</span>}
-                              <span className="text-white font-medium">{formatRupiah(membershipTotal)}</span>
-                            </div>
-                          </div>
-                          <div className="mt-1 ml-3">
-                            <span className="inline-block px-2 py-1 bg-slate-700/50 border border-slate-600 text-slate-300 rounded text-xs">Kategori: {selectedMembership.group}</span>
-                          </div>
-                        </div>
-                      )}
-                      
-                      {includePT && (
-                        <div className="flex flex-col">
-                          <div className="flex justify-between items-center text-sm">
-                            <span className="text-slate-300">• Personal Trainer: <span className="font-medium text-white">{selectedPT.name}</span></span>
-                            <div className="text-right flex items-center gap-2">
-                              {ptGimmickDiff > 0 && <span className="text-slate-500 line-through text-xs">{formatRupiah(ptMaxPrice)}</span>}
-                              <span className="text-white font-medium">{formatRupiah(ptTotal)}</span>
-                            </div>
-                          </div>
-                          <div className="mt-1 ml-3">
-                            <span className="inline-block px-2 py-1 bg-slate-700/50 border border-slate-600 text-slate-300 rounded text-xs">Masa Aktif: {selectedPT.validity} Hari</span>
-                          </div>
-                        </div>
-                      )}
-
-                      {totalAutoDiscount > 0 && (
-                        <div className="mt-3 mb-2 p-2 rounded-lg bg-emerald-500/20 border border-emerald-500/30 flex items-center text-emerald-400 text-sm font-medium">
-                           <i className="fa-solid fa-tag mr-2 flex-shrink-0"></i> Anda Hemat {formatRupiah(totalAutoDiscount)} (Promo Harga Spesial!)
-                        </div>
-                      )}
-
-                      {discountValue > 0 && (
-                        <div className="flex justify-between items-center text-sm text-emerald-400 font-medium mt-4 pt-3 border-t border-slate-700">
-                          <span>Potongan Harga Total</span>
-                          <span>- {formatRupiah(discountValue)}</span>
-                        </div>
-                      )}
-
-                      {!includeMembership && !includePT && (
-                        <div className="text-slate-400 text-sm italic">Belum ada paket yang dipilih.</div>
-                      )}
+                    <div 
+                      className="flex justify-between items-center mb-4 cursor-pointer group"
+                      onClick={() => setShowReceiptDetails(!showReceiptDetails)}
+                    >
+                      <h2 className="text-slate-300 text-sm font-medium uppercase tracking-wider group-hover:text-white transition-colors">Total Pembayaran</h2>
+                      <i className={`fa-solid ${showReceiptDetails ? 'fa-chevron-up' : 'fa-chevron-down'} text-slate-400 group-hover:text-white transition-colors`}></i>
                     </div>
+                    
+                    {showReceiptDetails && (
+                      <div className="space-y-4 mb-4 animate-in fade-in slide-in-from-top-2">
+                        {includeMembership && (
+                          <div className="flex flex-col">
+                            <div className="flex justify-between items-center text-sm">
+                              <span className="text-slate-300">• Membership: <span className="font-medium text-white">{selectedMembership.name}</span></span>
+                              <div className="text-right flex items-center gap-2">
+                                {memGimmickDiff > 0 && <span className="text-slate-500 line-through text-xs">{formatRupiah(memMaxPrice)}</span>}
+                                <span className="text-white font-medium">{formatRupiah(membershipTotal)}</span>
+                              </div>
+                            </div>
+                            <div className="mt-1 ml-3">
+                              <span className="inline-block px-2 py-1 bg-slate-700/50 border border-slate-600 text-slate-300 rounded text-xs">Kategori: {selectedMembership.group}</span>
+                            </div>
+                          </div>
+                        )}
+                        
+                        {includePT && (
+                          <div className="flex flex-col">
+                            <div className="flex justify-between items-center text-sm">
+                              <span className="text-slate-300">• Personal Trainer: <span className="font-medium text-white">{selectedPT.name}</span></span>
+                              <div className="text-right flex items-center gap-2">
+                                {ptGimmickDiff > 0 && <span className="text-slate-500 line-through text-xs">{formatRupiah(ptMaxPrice)}</span>}
+                                <span className="text-white font-medium">{formatRupiah(ptTotal)}</span>
+                              </div>
+                            </div>
+                            <div className="mt-1 ml-3">
+                              <span className="inline-block px-2 py-1 bg-slate-700/50 border border-slate-600 text-slate-300 rounded text-xs">Masa Aktif: {selectedPT.validity} Hari</span>
+                            </div>
+                          </div>
+                        )}
 
-                    <div className="border-t border-slate-600 pt-4">
+                        {totalAutoDiscount > 0 && (
+                          <div className="mt-3 mb-2 p-2 rounded-lg bg-emerald-500/20 border border-emerald-500/30 flex items-center text-emerald-400 text-sm font-medium">
+                             <i className="fa-solid fa-tag mr-2 flex-shrink-0"></i> Anda Hemat {formatRupiah(totalAutoDiscount)} (Promo Harga Spesial!)
+                          </div>
+                        )}
+
+                        {discountValue > 0 && (
+                          <div className="flex justify-between items-center text-sm text-emerald-400 font-medium mt-4 pt-3 border-t border-slate-700">
+                            <span>Potongan Harga Total</span>
+                            <span>- {formatRupiah(discountValue)}</span>
+                          </div>
+                        )}
+
+                        {!includeMembership && !includePT && (
+                          <div className="text-slate-400 text-sm italic">Belum ada paket yang dipilih.</div>
+                        )}
+                      </div>
+                    )}
+
+                    <div className={`pt-4 ${showReceiptDetails ? 'border-t border-slate-600' : ''}`}>
                       <div className="flex justify-between items-end">
                         <span className="text-lg font-medium text-slate-200">Total Akhir</span>
                         <div className="text-right">
@@ -389,4 +398,5 @@
     </script>
 </body>
 </html>
+
 
