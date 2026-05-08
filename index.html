@@ -33,7 +33,7 @@
     <div id="root"></div>
 
     <script type="text/babel">
-        const { useState, useMemo, useEffect } = React;
+        const { useState, useMemo } = React;
 
         // Data Paket Membership Baru
         const membershipPackages = [
@@ -80,7 +80,10 @@
           const [selectedMembershipId, setSelectedMembershipId] = useState(membershipPackages[0].id);
 
           const [includePT, setIncludePT] = useState(false);
-          const [selectedPTId, setSelectedPTId] = useState(ptPackages[0].id);
+          // State untuk 3 Kolom PT
+          const [pt1Id, setPt1Id] = useState(ptPackages[0].id);
+          const [pt2Id, setPt2Id] = useState('none');
+          const [pt3Id, setPt3Id] = useState('none');
 
           const [manualDiscount, setManualDiscount] = useState('');
           const [showDiscount, setShowDiscount] = useState(false);
@@ -99,14 +102,27 @@
 
           const isBundling = includeMembership && selectedMembership.minPT > 0;
 
-          const availablePTs = useMemo(() => {
+          // Filter PT1 (Harus memenuhi syarat jika Bundling)
+          const availablePT1s = useMemo(() => {
             if (!isBundling) return ptPackages;
             return ptPackages.filter(p => p.sessions >= selectedMembership.minPT);
           }, [isBundling, selectedMembership.minPT]);
 
-          const selectedPT = useMemo(() => 
-            availablePTs.find(p => p.id === selectedPTId) || availablePTs[0],
-          [selectedPTId, availablePTs]);
+          // Mengambil array PT yang aktif dipilih
+          const activePTs = useMemo(() => {
+            const pts = [];
+            if (includePT) {
+              const pt1 = availablePT1s.find(p => p.id === pt1Id) || availablePT1s[0];
+              if (pt1) pts.push(pt1);
+              
+              const pt2 = ptPackages.find(p => p.id === pt2Id);
+              if (pt2 && pt2Id !== 'none') pts.push(pt2);
+              
+              const pt3 = ptPackages.find(p => p.id === pt3Id);
+              if (pt3 && pt3Id !== 'none') pts.push(pt3);
+            }
+            return pts;
+          }, [includePT, pt1Id, pt2Id, pt3Id, availablePT1s]);
 
           const handleMembershipChange = (e) => {
             const newMemId = e.target.value;
@@ -115,10 +131,10 @@
 
             if (newMem.minPT > 0) {
               setIncludePT(true);
-              const currentPt = ptPackages.find(p => p.id === selectedPTId);
+              const currentPt = ptPackages.find(p => p.id === pt1Id);
               if (!currentPt || currentPt.sessions < newMem.minPT) {
                 const validPt = ptPackages.find(p => p.sessions >= newMem.minPT);
-                if (validPt) setSelectedPTId(validPt.id);
+                if (validPt) setPt1Id(validPt.id);
               }
             }
           };
@@ -128,21 +144,33 @@
             return Math.max(...membershipPackages.filter(p => p.name === selectedMembership.name && p.group === selectedMembership.group).map(p => p.total));
           }, [selectedMembership]);
 
-          const ptMaxPrice = useMemo(() => {
-            return Math.max(...ptPackages.filter(p => p.name === selectedPT.name).map(p => p.total));
-          }, [selectedPT]);
-
           const memGimmickDiff = includeMembership && (memMaxPrice > selectedMembership.total) ? memMaxPrice - selectedMembership.total : 0;
-          const ptGimmickDiff = includePT && (ptMaxPrice > selectedPT.total) ? ptMaxPrice - selectedPT.total : 0;
+          
+          let ptGimmickDiff = 0;
+          activePTs.forEach(pt => {
+            const max = Math.max(...ptPackages.filter(p => p.name === pt.name).map(p => p.total));
+            if (max > pt.total) ptGimmickDiff += (max - pt.total);
+          });
+
           const totalAutoDiscount = memGimmickDiff + ptGimmickDiff;
 
           // --- KALKULASI HARGA TOTAL ---
           const membershipTotal = includeMembership ? selectedMembership.total : 0;
-          const ptTotal = includePT ? selectedPT.total : 0;
+          
+          let ptTotal = 0;
+          let ptTotalSessions = 0;
+          let ptTotalValidity = 0;
+          
+          activePTs.forEach(pt => {
+             ptTotal += pt.total;
+             ptTotalSessions += pt.sessions;
+             ptTotalValidity += pt.validity;
+          });
+
           const subTotal = membershipTotal + ptTotal;
 
           const pricePerMonth = membershipTotal > 0 ? (membershipTotal / (selectedMembership.days / 30)) : 0;
-          const pricePerSession = ptTotal > 0 ? (ptTotal / selectedPT.sessions) : 0;
+          const pricePerSession = ptTotal > 0 ? (ptTotal / ptTotalSessions) : 0;
 
           const discountValue = parseInt(manualDiscount.replace(/[^0-9]/g, ''), 10) || 0;
           const grandTotal = Math.max(0, subTotal - discountValue);
@@ -152,15 +180,20 @@
           if (includeMembership) {
             effectiveMonths = selectedMembership.days / 30;
           } else if (includePT) {
-            effectiveMonths = Math.max(1, Math.round(selectedPT.validity / 30));
+            effectiveMonths = Math.max(1, Math.round(ptTotalValidity / 30));
           }
           const grandTotalPerMonth = grandTotal > 0 ? grandTotal / effectiveMonths : 0;
 
           // --- REVENUE INTERNAL ---
           const revMembership = includeMembership ? selectedMembership.rev : 0;
           const pb1Membership = includeMembership ? selectedMembership.pb1 : 0;
-          const revPT = includePT ? selectedPT.rev : 0;
-          const pb1PT = includePT ? selectedPT.pb1 : 0;
+          
+          let revPT = 0;
+          let pb1PT = 0;
+          activePTs.forEach(pt => {
+             revPT += pt.rev;
+             pb1PT += pt.pb1;
+          });
           
           const totalRevenue = revMembership + revPT;
           const totalPB1 = pb1Membership + pb1PT;
@@ -177,7 +210,7 @@
                     <i className="fa-solid fa-calculator text-indigo-200 text-4xl"></i>
                   </div>
                   <h1 className="text-2xl font-bold tracking-tight">Willfitness Calculator</h1>
-                  <p className="text-indigo-100 text-sm mt-1">Simulasi Total Harga Membership & PT</p>
+                  <p className="text-indigo-100 text-sm mt-1">Simulasi Penawaran Membership & PT</p>
                 </div>
 
                 <div className="p-6 space-y-6">
@@ -211,34 +244,65 @@
                     )}
                   </div>
 
-                  {/* PT */}
+                  {/* PT (3 KOLOM MIX) */}
                   <div className="space-y-3">
                     <label className="flex items-center space-x-3 cursor-pointer group">
                       <input type="checkbox" checked={includePT} disabled={isBundling} onChange={(e) => setIncludePT(e.target.checked)} className="w-5 h-5 text-indigo-600 rounded focus:ring-indigo-500 border-gray-300 disabled:opacity-50" />
                       <span className="flex items-center space-x-2 font-semibold text-lg text-slate-700 group-hover:text-indigo-600 transition-colors">
                         <i className="fa-solid fa-user text-xl"></i>
-                        <span>Paket Personal Trainer (PT)</span>
+                        <span>Paket Personal Trainer (Mix)</span>
                         {isBundling && <i className="fa-solid fa-lock text-amber-500 ml-1"></i>}
                       </span>
                     </label>
 
                     {isBundling && (
                        <div className="pl-8 text-xs text-amber-600 font-medium">
-                         *Paket Membership Bundling mewajibkan Anda mengambil paket PT minimal {selectedMembership.minPT} Sesi.
+                         *Bundling: Kolom PT 1 wajib minimal {selectedMembership.minPT} Sesi.
                        </div>
                     )}
 
                     {includePT && (
                       <div className={`pl-8 p-4 bg-slate-50 rounded-xl border animate-in fade-in slide-in-from-top-2 ${isBundling ? 'border-amber-200' : 'border-slate-200'}`}>
-                        <select value={selectedPTId} onChange={(e) => setSelectedPTId(e.target.value)} className="w-full p-3 rounded-lg border border-slate-300 bg-white focus:ring-2 focus:ring-indigo-500 outline-none transition-all font-medium">
-                          {availablePTs.map((pkg) => (
-                            <option key={pkg.id} value={pkg.id}>{pkg.name}</option>
-                          ))}
-                        </select>
-                        <div className="mt-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                        
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                           {/* Kolom 1 (Utama) */}
+                           <div className="space-y-1">
+                             <label className="text-xs font-bold text-slate-500 uppercase">PT 1 (Utama)</label>
+                             <select value={pt1Id} onChange={(e) => setPt1Id(e.target.value)} className="w-full p-2.5 text-sm rounded-lg border border-slate-300 bg-white focus:ring-2 focus:ring-indigo-500 outline-none font-medium">
+                               {availablePT1s.map((pkg) => (
+                                 <option key={pkg.id} value={pkg.id}>{pkg.name}</option>
+                               ))}
+                             </select>
+                           </div>
+
+                           {/* Kolom 2 (Tambahan) */}
+                           <div className="space-y-1">
+                             <label className="text-xs font-bold text-slate-400 uppercase">PT 2 (Mix)</label>
+                             <select value={pt2Id} onChange={(e) => setPt2Id(e.target.value)} className="w-full p-2.5 text-sm rounded-lg border border-slate-300 bg-white focus:ring-2 focus:ring-indigo-500 outline-none text-slate-600">
+                               <option value="none">-- Kosong --</option>
+                               {ptPackages.map((pkg) => (
+                                 <option key={pkg.id} value={pkg.id}>{pkg.name}</option>
+                               ))}
+                             </select>
+                           </div>
+
+                           {/* Kolom 3 (Tambahan) */}
+                           <div className="space-y-1">
+                             <label className="text-xs font-bold text-slate-400 uppercase">PT 3 (Mix)</label>
+                             <select value={pt3Id} onChange={(e) => setPt3Id(e.target.value)} className="w-full p-2.5 text-sm rounded-lg border border-slate-300 bg-white focus:ring-2 focus:ring-indigo-500 outline-none text-slate-600">
+                               <option value="none">-- Kosong --</option>
+                               {ptPackages.map((pkg) => (
+                                 <option key={pkg.id} value={pkg.id}>{pkg.name}</option>
+                               ))}
+                             </select>
+                           </div>
+                        </div>
+
+                        {/* Bedah Harga PT (Akumulasi) */}
+                        <div className="mt-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                            <div className="flex items-center text-sm text-emerald-600 bg-emerald-50 px-3 py-2 rounded-lg border border-emerald-100 flex-1">
                              <i className="fa-solid fa-circle-info mr-2 flex-shrink-0"></i>
-                             <span>Jatuhnya <strong>{formatRupiah(pricePerSession)}</strong> / sesi</span>
+                             <span>Jatuhnya <strong>{formatRupiah(pricePerSession)}</strong> / sesi (Total {ptTotalSessions} Sesi)</span>
                            </div>
                         </div>
                       </div>
@@ -287,7 +351,7 @@
                     {showReceiptDetails && (
                       <div className="space-y-4 mb-4 animate-in fade-in slide-in-from-top-2">
                         {includeMembership && (
-                          <div className="flex flex-col">
+                          <div className="flex flex-col border-b border-slate-700 pb-3">
                             <div className="flex justify-between items-center text-sm">
                               <span className="text-slate-300">• Membership: <span className="font-medium text-white">{selectedMembership.name}</span></span>
                               <div className="text-right flex items-center gap-2">
@@ -301,17 +365,30 @@
                           </div>
                         )}
                         
-                        {includePT && (
+                        {includePT && activePTs.length > 0 && (
                           <div className="flex flex-col">
-                            <div className="flex justify-between items-center text-sm">
-                              <span className="text-slate-300">• Personal Trainer: <span className="font-medium text-white">{selectedPT.name}</span></span>
-                              <div className="text-right flex items-center gap-2">
-                                {ptGimmickDiff > 0 && <span className="text-slate-500 line-through text-xs">{formatRupiah(ptMaxPrice)}</span>}
-                                <span className="text-white font-medium">{formatRupiah(ptTotal)}</span>
-                              </div>
+                            <span className="text-slate-300 text-sm mb-2">• Personal Trainer (Total {ptTotalSessions} Sesi):</span>
+                            
+                            <div className="space-y-2 ml-3">
+                              {activePTs.map((pt, index) => {
+                                // Hitung max price per item di struk
+                                const max = Math.max(...ptPackages.filter(p => p.name === pt.name).map(p => p.total));
+                                const hasGimmick = max > pt.total;
+
+                                return (
+                                  <div key={index} className="flex justify-between items-center text-sm">
+                                    <span className="text-slate-400">- {pt.name}</span>
+                                    <div className="text-right flex items-center gap-2">
+                                      {hasGimmick && <span className="text-slate-500 line-through text-xs">{formatRupiah(max)}</span>}
+                                      <span className="text-white font-medium">{formatRupiah(pt.total)}</span>
+                                    </div>
+                                  </div>
+                                )
+                              })}
                             </div>
-                            <div className="mt-1 ml-3">
-                              <span className="inline-block px-2 py-1 bg-slate-700/50 border border-slate-600 text-slate-300 rounded text-xs">Masa Aktif: {selectedPT.validity} Hari</span>
+                            
+                            <div className="mt-2 ml-3">
+                              <span className="inline-block px-2 py-1 bg-slate-700/50 border border-slate-600 text-slate-300 rounded text-xs">Masa Aktif: {ptTotalValidity} Hari</span>
                             </div>
                           </div>
                         )}
@@ -370,9 +447,9 @@
                        </div>
                      )}
 
-                     {includePT && (
+                     {includePT && activePTs.length > 0 && (
                        <div className="mb-4">
-                         <p className="text-xs font-bold text-slate-400 uppercase tracking-wider border-b pb-1 mb-2">Data Personal Trainer</p>
+                         <p className="text-xs font-bold text-slate-400 uppercase tracking-wider border-b pb-1 mb-2">Data Personal Trainer (Mix {activePTs.length} Paket)</p>
                          <div className="flex justify-between text-sm text-slate-700 mb-1"><span>Revenue Diterima:</span><span className="font-medium">{formatRupiah(revPT)}</span></div>
                          <div className="flex justify-between text-sm text-slate-700"><span>Penyesuaian PB1:</span><span className="font-medium">{formatRupiah(pb1PT)}</span></div>
                        </div>
@@ -398,5 +475,3 @@
     </script>
 </body>
 </html>
-
-
