@@ -1,477 +1,365 @@
+```react
+import React, { useState, useMemo } from 'react';
+import { Calculator, Dumbbell, User, Receipt, Settings2, Info, ChevronDown, ChevronUp, Lock, FileSpreadsheet, Tag } from 'lucide-react';
 
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Willfitness Calculator</title>
-    
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Font Awesome untuk Ikon -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+// --- DATA PAKET MEMBERSHIP ---
+const membershipPackages = [
+  { id: 'o1', group: 'One Club', name: '1 Bulan', total: 616000, rev: 560000, pb1: 56000, days: 30, minPT: 0 },
+  { id: 'o2', group: 'One Club', name: '3 Bulan', total: 1056000, rev: 960000, pb1: 96000, days: 90, minPT: 0 },
+  { id: 'o3', group: 'One Club', name: '3 Bulan', total: 1155000, rev: 1050000, pb1: 105000, days: 90, minPT: 0 },
+  { id: 'o4', group: 'One Club', name: '6 Bulan', total: 1848000, rev: 1680000, pb1: 168000, days: 180, minPT: 0 },
+  { id: 'o5', group: 'One Club', name: '6 Bulan', total: 1980000, rev: 1800000, pb1: 180000, days: 180, minPT: 0 },
+  
+  { id: 'a1', group: 'All Club', name: '3 Bulan', total: 1419000, rev: 1290000, pb1: 129000, days: 90, minPT: 0 },
+  { id: 'a2', group: 'All Club', name: '6 Bulan', total: 2112000, rev: 1920000, pb1: 192000, days: 180, minPT: 0 },
+  { id: 'a3', group: 'All Club', name: '12 Bulan', total: 2838000, rev: 2580000, pb1: 258000, days: 360, minPT: 0 },
+  { id: 'a4', group: 'All Club', name: '12+2 Bulan', total: 3619000, rev: 3290000, pb1: 329000, days: 420, minPT: 0 },
 
-    <!-- React & ReactDOM -->
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    
-    <!-- Babel -->
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  { id: 'b1', group: 'Bundling (With PT)', name: '3 Bulan', total: 660000, rev: 600000, pb1: 60000, days: 90, minPT: 24 },
+  { id: 'b2', group: 'Bundling (With PT)', name: '6 Bulan', total: 1320000, rev: 1200000, pb1: 120000, days: 180, minPT: 24 },
+  { id: 'b3', group: 'Bundling (With PT)', name: '12 Bulan', total: 2750000, rev: 2500000, pb1: 250000, days: 360, minPT: 3 },
+  { id: 'b4', group: 'Bundling (With PT)', name: '12 Bulan', total: 2640000, rev: 2400000, pb1: 240000, days: 360, minPT: 16 },
+];
 
-    <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        .animate-in { animation: fadeIn 0.3s ease-out forwards; }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-5px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-    </style>
-</head>
-<body class="bg-slate-50 text-slate-800 antialiased">
+// --- DATA PAKET PT ---
+const ptPackages = [
+  { id: 'p1', name: '3 Sesi', total: 693000, rev: 630000, pb1: 63000, sessions: 3, validity: 19 },
+  { id: 'p2', name: '3 Sesi', total: 990000, rev: 900000, pb1: 90000, sessions: 3, validity: 19 },
+  { id: 'p3', name: '6 Sesi', total: 1386000, rev: 1260000, pb1: 126000, sessions: 6, validity: 30 },
+  { id: 'p4', name: '6 Sesi', total: 1980000, rev: 1800000, pb1: 180000, sessions: 6, validity: 30 },
+  { id: 'p5', name: '8 Sesi', total: 1936000, rev: 1760000, pb1: 176000, sessions: 8, validity: 34 },
+  { id: 'p6', name: '12 Sesi', total: 2772000, rev: 2520000, pb1: 252000, sessions: 12, validity: 52 },
+  { id: 'p7', name: '15 Sesi', total: 3465000, rev: 3150000, pb1: 315000, sessions: 15, validity: 65 },
+  { id: 'p8', name: '16 Sesi', total: 3784000, rev: 3440000, pb1: 344000, sessions: 16, validity: 70 },
+  { id: 'p9', name: '16 Sesi', total: 3872000, rev: 3520000, pb1: 352000, sessions: 16, validity: 70 },
+  { id: 'p10', name: '24 Sesi', total: 4752000, rev: 4320000, pb1: 432000, sessions: 24, validity: 99 },
+  { id: 'p11', name: '24 Sesi', total: 5720000, rev: 5200000, pb1: 520000, sessions: 24, validity: 99 },
+  { id: 'p12', name: '32 Sesi', total: 5456000, rev: 4960000, pb1: 496000, sessions: 32, validity: 130 },
+  { id: 'p13', name: '32 Sesi', total: 7568000, rev: 6880000, pb1: 688000, sessions: 32, validity: 130 },
+  { id: 'p14', name: '32 Sesi', total: 7744000, rev: 7040000, pb1: 704000, sessions: 32, validity: 130 },
+  { id: 'p15', name: '70 Sesi', total: 11935000, rev: 10850000, pb1: 1085000, sessions: 70, validity: 290 },
+  { id: 'p16', name: '70 Sesi', total: 12298000, rev: 11180000, pb1: 1118000, sessions: 70, validity: 290 },
+  { id: 'p17', name: '100 Sesi', total: 17050000, rev: 15500000, pb1: 1550000, sessions: 100, validity: 410 },
+];
 
-    <div id="root"></div>
+export default function App() {
+  const [includeMembership, setIncludeMembership] = useState(true);
+  const [selectedMembershipId, setSelectedMembershipId] = useState(membershipPackages[0].id);
 
-    <script type="text/babel">
-        const { useState, useMemo } = React;
+  const [includePT, setIncludePT] = useState(false);
+  const [selectedPTId, setSelectedPTId] = useState(ptPackages[0].id);
 
-        // Data Paket Membership Baru
-        const membershipPackages = [
-          { id: 'o1', group: 'One Club', name: '1 Bulan', total: 616000, rev: 560000, pb1: 56000, days: 30, minPT: 0 },
-          { id: 'o2', group: 'One Club', name: '3 Bulan', total: 1056000, rev: 960000, pb1: 96000, days: 90, minPT: 0 },
-          { id: 'o3', group: 'One Club', name: '3 Bulan', total: 1155000, rev: 1050000, pb1: 105000, days: 90, minPT: 0 },
-          { id: 'o4', group: 'One Club', name: '6 Bulan', total: 1848000, rev: 1680000, pb1: 168000, days: 180, minPT: 0 },
-          { id: 'o5', group: 'One Club', name: '6 Bulan', total: 1980000, rev: 1800000, pb1: 180000, days: 180, minPT: 0 },
+  const [manualDiscount, setManualDiscount] = useState('');
+  const [showDiscount, setShowDiscount] = useState(false);
+  const [showRevenue, setShowRevenue] = useState(false);
+  const [showReceiptDetails, setShowReceiptDetails] = useState(true);
+
+  const formatRupiah = (number) => {
+    return new Intl.NumberFormat('id-ID', {
+      style: 'currency', currency: 'IDR', minimumFractionDigits: 0, maximumFractionDigits: 0,
+    }).format(number);
+  };
+
+  const selectedMembership = useMemo(() => 
+    membershipPackages.find(p => p.id === selectedMembershipId) || membershipPackages[0],
+  [selectedMembershipId]);
+
+  const isBundling = includeMembership && selectedMembership.minPT > 0;
+
+  const availablePTs = useMemo(() => {
+    if (!isBundling) return ptPackages;
+    return ptPackages.filter(p => p.sessions >= selectedMembership.minPT);
+  }, [isBundling, selectedMembership.minPT]);
+
+  const selectedPT = useMemo(() => 
+    availablePTs.find(p => p.id === selectedPTId) || availablePTs[0],
+  [selectedPTId, availablePTs]);
+
+  const handleMembershipChange = (e) => {
+    const newMemId = e.target.value;
+    const newMem = membershipPackages.find(p => p.id === newMemId);
+    setSelectedMembershipId(newMemId);
+
+    if (newMem.minPT > 0) {
+      setIncludePT(true);
+      const currentPt = ptPackages.find(p => p.id === selectedPTId);
+      if (!currentPt || currentPt.sessions < newMem.minPT) {
+        const validPt = ptPackages.find(p => p.sessions >= newMem.minPT);
+        if (validPt) setSelectedPTId(validPt.id);
+      }
+    }
+  };
+
+  // --- LOGIKA GIMMICK DISKON ---
+  const memMaxPrice = useMemo(() => {
+    const samePkgs = membershipPackages.filter(p => p.name === selectedMembership.name && p.group === selectedMembership.group);
+    return Math.max(...samePkgs.map(p => p.total));
+  }, [selectedMembership]);
+
+  const ptMaxPrice = useMemo(() => {
+    const samePkgs = ptPackages.filter(p => p.name === selectedPT.name);
+    return Math.max(...samePkgs.map(p => p.total));
+  }, [selectedPT]);
+
+  const memGimmickDiff = includeMembership && (memMaxPrice > selectedMembership.total) ? memMaxPrice - selectedMembership.total : 0;
+  const ptGimmickDiff = includePT && (ptMaxPrice > selectedPT.total) ? ptMaxPrice - selectedPT.total : 0;
+  const totalAutoDiscount = memGimmickDiff + ptGimmickDiff;
+
+  // --- KALKULASI HARGA ---
+  const membershipTotal = includeMembership ? selectedMembership.total : 0;
+  const ptTotal = includePT ? selectedPT.total : 0;
+  const subTotal = membershipTotal + ptTotal;
+
+  const pricePerMonth = membershipTotal > 0 ? (membershipTotal / (selectedMembership.days / 30)) : 0;
+  const pricePerSession = ptTotal > 0 ? (ptTotal / selectedPT.sessions) : 0;
+
+  const discountValue = parseInt(manualDiscount.replace(/[^0-9]/g, ''), 10) || 0;
+  const grandTotal = Math.max(0, subTotal - discountValue);
+
+  // Breakdown Per Bulan (Total Akhir)
+  let effectiveMonths = 1;
+  if (includeMembership) {
+    effectiveMonths = selectedMembership.days / 30;
+  } else if (includePT) {
+    effectiveMonths = Math.max(1, Math.round(selectedPT.validity / 30));
+  }
+  const grandTotalPerMonth = grandTotal > 0 ? grandTotal / effectiveMonths : 0;
+
+  // --- REVENUE INTERNAL ---
+  const revMembership = includeMembership ? selectedMembership.rev : 0;
+  const pb1Membership = includeMembership ? selectedMembership.pb1 : 0;
+  const revPT = includePT ? selectedPT.rev : 0;
+  const pb1PT = includePT ? selectedPT.pb1 : 0;
+  
+  const totalRevenue = revMembership + revPT;
+  const totalPB1 = pb1Membership + pb1PT;
+
+  const groups = ['One Club', 'All Club', 'Bundling (With PT)'];
+
+  return (
+    <div className="min-h-screen bg-slate-50 py-8 px-4 font-sans text-slate-800 flex flex-col items-center justify-center">
+      <div className="w-full max-w-xl bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-100">
+        
+        {/* Header */}
+        <div className="bg-indigo-600 p-6 text-white text-center">
+          <div className="flex justify-center mb-3 text-indigo-200">
+            <Calculator size={40} />
+          </div>
+          <h1 className="text-2xl font-bold tracking-tight">Willfitness Calculator</h1>
+          <p className="text-indigo-100 text-sm mt-1">Simulasi Total Harga Membership & PT</p>
+        </div>
+
+        <div className="p-6 space-y-6">
           
-          { id: 'a1', group: 'All Club', name: '3 Bulan', total: 1419000, rev: 1290000, pb1: 129000, days: 90, minPT: 0 },
-          { id: 'a2', group: 'All Club', name: '6 Bulan', total: 2112000, rev: 1920000, pb1: 192000, days: 180, minPT: 0 },
-          { id: 'a3', group: 'All Club', name: '12 Bulan', total: 2838000, rev: 2580000, pb1: 258000, days: 360, minPT: 0 },
-          { id: 'a4', group: 'All Club', name: '12+2 Bulan', total: 3619000, rev: 3290000, pb1: 329000, days: 420, minPT: 0 },
+          {/* Membership Selection */}
+          <div className="space-y-3">
+            <label className="flex items-center space-x-3 cursor-pointer group">
+              <input type="checkbox" checked={includeMembership} onChange={(e) => setIncludeMembership(e.target.checked)} className="w-5 h-5 text-indigo-600 rounded focus:ring-indigo-500 border-gray-300" />
+              <span className="flex items-center space-x-2 font-semibold text-lg text-slate-700 group-hover:text-indigo-600 transition-colors">
+                <Dumbbell size={20} />
+                <span>Paket Membership</span>
+              </span>
+            </label>
 
-          { id: 'b1', group: 'Bundling (With PT)', name: '3 Bulan', total: 660000, rev: 600000, pb1: 60000, days: 90, minPT: 24 },
-          { id: 'b2', group: 'Bundling (With PT)', name: '6 Bulan', total: 1320000, rev: 1200000, pb1: 120000, days: 180, minPT: 24 },
-          { id: 'b3', group: 'Bundling (With PT)', name: '12 Bulan', total: 2750000, rev: 2500000, pb1: 250000, days: 360, minPT: 3 },
-          { id: 'b4', group: 'Bundling (With PT)', name: '12 Bulan', total: 2640000, rev: 2400000, pb1: 240000, days: 360, minPT: 16 },
-        ];
-
-        // Data Paket PT Baru
-        const ptPackages = [
-          { id: 'p1', name: '3 Sesi', total: 693000, rev: 630000, pb1: 63000, sessions: 3, validity: 19 },
-          { id: 'p2', name: '3 Sesi', total: 990000, rev: 900000, pb1: 90000, sessions: 3, validity: 19 },
-          { id: 'p3', name: '6 Sesi', total: 1386000, rev: 1260000, pb1: 126000, sessions: 6, validity: 30 },
-          { id: 'p4', name: '6 Sesi', total: 1980000, rev: 1800000, pb1: 180000, sessions: 6, validity: 30 },
-          { id: 'p5', name: '8 Sesi', total: 1936000, rev: 1760000, pb1: 176000, sessions: 8, validity: 34 },
-          { id: 'p6', name: '12 Sesi', total: 2772000, rev: 2520000, pb1: 252000, sessions: 12, validity: 52 },
-          { id: 'p7', name: '15 Sesi', total: 3465000, rev: 3150000, pb1: 315000, sessions: 15, validity: 65 },
-          { id: 'p8', name: '16 Sesi', total: 3784000, rev: 3440000, pb1: 344000, sessions: 16, validity: 70 },
-          { id: 'p9', name: '16 Sesi', total: 3872000, rev: 3520000, pb1: 352000, sessions: 16, validity: 70 },
-          { id: 'p10', name: '24 Sesi', total: 4752000, rev: 4320000, pb1: 432000, sessions: 24, validity: 99 },
-          { id: 'p11', name: '24 Sesi', total: 5720000, rev: 5200000, pb1: 520000, sessions: 24, validity: 99 },
-          { id: 'p12', name: '32 Sesi', total: 5456000, rev: 4960000, pb1: 496000, sessions: 32, validity: 130 },
-          { id: 'p13', name: '32 Sesi', total: 7568000, rev: 6880000, pb1: 688000, sessions: 32, validity: 130 },
-          { id: 'p14', name: '32 Sesi', total: 7744000, rev: 7040000, pb1: 704000, sessions: 32, validity: 130 },
-          { id: 'p15', name: '70 Sesi', total: 11935000, rev: 10850000, pb1: 1085000, sessions: 70, validity: 290 },
-          { id: 'p16', name: '70 Sesi', total: 12298000, rev: 11180000, pb1: 1118000, sessions: 70, validity: 290 },
-          { id: 'p17', name: '100 Sesi', total: 17050000, rev: 15500000, pb1: 1550000, sessions: 100, validity: 410 },
-        ];
-
-        function App() {
-          const [includeMembership, setIncludeMembership] = useState(true);
-          const [selectedMembershipId, setSelectedMembershipId] = useState(membershipPackages[0].id);
-
-          const [includePT, setIncludePT] = useState(false);
-          // State untuk 3 Kolom PT
-          const [pt1Id, setPt1Id] = useState(ptPackages[0].id);
-          const [pt2Id, setPt2Id] = useState('none');
-          const [pt3Id, setPt3Id] = useState('none');
-
-          const [manualDiscount, setManualDiscount] = useState('');
-          const [showDiscount, setShowDiscount] = useState(false);
-          const [showRevenue, setShowRevenue] = useState(false);
-          const [showReceiptDetails, setShowReceiptDetails] = useState(true);
-
-          const formatRupiah = (number) => {
-            return new Intl.NumberFormat('id-ID', {
-              style: 'currency', currency: 'IDR', minimumFractionDigits: 0, maximumFractionDigits: 0,
-            }).format(number);
-          };
-
-          const selectedMembership = useMemo(() => 
-            membershipPackages.find(p => p.id === selectedMembershipId) || membershipPackages[0],
-          [selectedMembershipId]);
-
-          const isBundling = includeMembership && selectedMembership.minPT > 0;
-
-          // Filter PT1 (Harus memenuhi syarat jika Bundling)
-          const availablePT1s = useMemo(() => {
-            if (!isBundling) return ptPackages;
-            return ptPackages.filter(p => p.sessions >= selectedMembership.minPT);
-          }, [isBundling, selectedMembership.minPT]);
-
-          // Mengambil array PT yang aktif dipilih
-          const activePTs = useMemo(() => {
-            const pts = [];
-            if (includePT) {
-              const pt1 = availablePT1s.find(p => p.id === pt1Id) || availablePT1s[0];
-              if (pt1) pts.push(pt1);
-              
-              const pt2 = ptPackages.find(p => p.id === pt2Id);
-              if (pt2 && pt2Id !== 'none') pts.push(pt2);
-              
-              const pt3 = ptPackages.find(p => p.id === pt3Id);
-              if (pt3 && pt3Id !== 'none') pts.push(pt3);
-            }
-            return pts;
-          }, [includePT, pt1Id, pt2Id, pt3Id, availablePT1s]);
-
-          const handleMembershipChange = (e) => {
-            const newMemId = e.target.value;
-            const newMem = membershipPackages.find(p => p.id === newMemId);
-            setSelectedMembershipId(newMemId);
-
-            if (newMem.minPT > 0) {
-              setIncludePT(true);
-              const currentPt = ptPackages.find(p => p.id === pt1Id);
-              if (!currentPt || currentPt.sessions < newMem.minPT) {
-                const validPt = ptPackages.find(p => p.sessions >= newMem.minPT);
-                if (validPt) setPt1Id(validPt.id);
-              }
-            }
-          };
-
-          // --- KALKULASI GIMMICK DISKON ---
-          const memMaxPrice = useMemo(() => {
-            return Math.max(...membershipPackages.filter(p => p.name === selectedMembership.name && p.group === selectedMembership.group).map(p => p.total));
-          }, [selectedMembership]);
-
-          const memGimmickDiff = includeMembership && (memMaxPrice > selectedMembership.total) ? memMaxPrice - selectedMembership.total : 0;
-          
-          let ptGimmickDiff = 0;
-          activePTs.forEach(pt => {
-            const max = Math.max(...ptPackages.filter(p => p.name === pt.name).map(p => p.total));
-            if (max > pt.total) ptGimmickDiff += (max - pt.total);
-          });
-
-          const totalAutoDiscount = memGimmickDiff + ptGimmickDiff;
-
-          // --- KALKULASI HARGA TOTAL ---
-          const membershipTotal = includeMembership ? selectedMembership.total : 0;
-          
-          let ptTotal = 0;
-          let ptTotalSessions = 0;
-          let ptTotalValidity = 0;
-          
-          activePTs.forEach(pt => {
-             ptTotal += pt.total;
-             ptTotalSessions += pt.sessions;
-             ptTotalValidity += pt.validity;
-          });
-
-          const subTotal = membershipTotal + ptTotal;
-
-          const pricePerMonth = membershipTotal > 0 ? (membershipTotal / (selectedMembership.days / 30)) : 0;
-          const pricePerSession = ptTotal > 0 ? (ptTotal / ptTotalSessions) : 0;
-
-          const discountValue = parseInt(manualDiscount.replace(/[^0-9]/g, ''), 10) || 0;
-          const grandTotal = Math.max(0, subTotal - discountValue);
-
-          // Breakdown Per Bulan
-          let effectiveMonths = 1;
-          if (includeMembership) {
-            effectiveMonths = selectedMembership.days / 30;
-          } else if (includePT) {
-            effectiveMonths = Math.max(1, Math.round(ptTotalValidity / 30));
-          }
-          const grandTotalPerMonth = grandTotal > 0 ? grandTotal / effectiveMonths : 0;
-
-          // --- REVENUE INTERNAL ---
-          const revMembership = includeMembership ? selectedMembership.rev : 0;
-          const pb1Membership = includeMembership ? selectedMembership.pb1 : 0;
-          
-          let revPT = 0;
-          let pb1PT = 0;
-          activePTs.forEach(pt => {
-             revPT += pt.rev;
-             pb1PT += pt.pb1;
-          });
-          
-          const totalRevenue = revMembership + revPT;
-          const totalPB1 = pb1Membership + pb1PT;
-
-          const groups = ['One Club', 'All Club', 'Bundling (With PT)'];
-
-          return (
-            <div className="min-h-screen bg-slate-50 py-8 px-4 font-sans text-slate-800 flex flex-col items-center justify-center">
-              <div className="w-full max-w-xl bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-100">
-                
-                {/* Header */}
-                <div className="bg-indigo-600 p-6 text-white text-center">
-                  <div className="flex justify-center mb-3">
-                    <i className="fa-solid fa-calculator text-indigo-200 text-4xl"></i>
-                  </div>
-                  <h1 className="text-2xl font-bold tracking-tight">Willfitness Calculator</h1>
-                  <p className="text-indigo-100 text-sm mt-1">Simulasi Penawaran Membership & PT</p>
-                </div>
-
-                <div className="p-6 space-y-6">
-                  
-                  {/* Membership */}
-                  <div className="space-y-3">
-                    <label className="flex items-center space-x-3 cursor-pointer group">
-                      <input type="checkbox" checked={includeMembership} onChange={(e) => setIncludeMembership(e.target.checked)} className="w-5 h-5 text-indigo-600 rounded focus:ring-indigo-500 border-gray-300" />
-                      <span className="flex items-center space-x-2 font-semibold text-lg text-slate-700 group-hover:text-indigo-600 transition-colors">
-                        <i className="fa-solid fa-dumbbell text-xl"></i>
-                        <span>Paket Membership</span>
-                      </span>
-                    </label>
-
-                    {includeMembership && (
-                      <div className="pl-8 p-4 bg-slate-50 rounded-xl border border-slate-200 animate-in fade-in slide-in-from-top-2">
-                        <select value={selectedMembershipId} onChange={handleMembershipChange} className="w-full p-3 rounded-lg border border-slate-300 bg-white focus:ring-2 focus:ring-indigo-500 outline-none transition-all font-medium">
-                          {groups.map(groupName => (
-                            <optgroup key={groupName} label={groupName.toUpperCase()}>
-                              {membershipPackages.filter(p => p.group === groupName).map(pkg => (
-                                <option key={pkg.id} value={pkg.id}>{pkg.name}</option>
-                              ))}
-                            </optgroup>
-                          ))}
-                        </select>
-                        <div className="mt-3 flex items-center text-sm text-emerald-600 bg-emerald-50 px-3 py-2 rounded-lg border border-emerald-100">
-                          <i className="fa-solid fa-circle-info mr-2 flex-shrink-0"></i>
-                          <span>Jatuhnya <strong>{formatRupiah(pricePerMonth)}</strong> / bln (Aktif {selectedMembership.days} Hari)</span>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* PT (3 KOLOM MIX) */}
-                  <div className="space-y-3">
-                    <label className="flex items-center space-x-3 cursor-pointer group">
-                      <input type="checkbox" checked={includePT} disabled={isBundling} onChange={(e) => setIncludePT(e.target.checked)} className="w-5 h-5 text-indigo-600 rounded focus:ring-indigo-500 border-gray-300 disabled:opacity-50" />
-                      <span className="flex items-center space-x-2 font-semibold text-lg text-slate-700 group-hover:text-indigo-600 transition-colors">
-                        <i className="fa-solid fa-user text-xl"></i>
-                        <span>Paket Personal Trainer (Mix)</span>
-                        {isBundling && <i className="fa-solid fa-lock text-amber-500 ml-1"></i>}
-                      </span>
-                    </label>
-
-                    {isBundling && (
-                       <div className="pl-8 text-xs text-amber-600 font-medium">
-                         *Bundling: Kolom PT 1 wajib minimal {selectedMembership.minPT} Sesi.
-                       </div>
-                    )}
-
-                    {includePT && (
-                      <div className={`pl-8 p-4 bg-slate-50 rounded-xl border animate-in fade-in slide-in-from-top-2 ${isBundling ? 'border-amber-200' : 'border-slate-200'}`}>
-                        
-                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                           {/* Kolom 1 (Utama) */}
-                           <div className="space-y-1">
-                             <label className="text-xs font-bold text-slate-500 uppercase">PT 1 (Utama)</label>
-                             <select value={pt1Id} onChange={(e) => setPt1Id(e.target.value)} className="w-full p-2.5 text-sm rounded-lg border border-slate-300 bg-white focus:ring-2 focus:ring-indigo-500 outline-none font-medium">
-                               {availablePT1s.map((pkg) => (
-                                 <option key={pkg.id} value={pkg.id}>{pkg.name}</option>
-                               ))}
-                             </select>
-                           </div>
-
-                           {/* Kolom 2 (Tambahan) */}
-                           <div className="space-y-1">
-                             <label className="text-xs font-bold text-slate-400 uppercase">PT 2 (Mix)</label>
-                             <select value={pt2Id} onChange={(e) => setPt2Id(e.target.value)} className="w-full p-2.5 text-sm rounded-lg border border-slate-300 bg-white focus:ring-2 focus:ring-indigo-500 outline-none text-slate-600">
-                               <option value="none">-- Kosong --</option>
-                               {ptPackages.map((pkg) => (
-                                 <option key={pkg.id} value={pkg.id}>{pkg.name}</option>
-                               ))}
-                             </select>
-                           </div>
-
-                           {/* Kolom 3 (Tambahan) */}
-                           <div className="space-y-1">
-                             <label className="text-xs font-bold text-slate-400 uppercase">PT 3 (Mix)</label>
-                             <select value={pt3Id} onChange={(e) => setPt3Id(e.target.value)} className="w-full p-2.5 text-sm rounded-lg border border-slate-300 bg-white focus:ring-2 focus:ring-indigo-500 outline-none text-slate-600">
-                               <option value="none">-- Kosong --</option>
-                               {ptPackages.map((pkg) => (
-                                 <option key={pkg.id} value={pkg.id}>{pkg.name}</option>
-                               ))}
-                             </select>
-                           </div>
-                        </div>
-
-                        {/* Bedah Harga PT (Akumulasi) */}
-                        <div className="mt-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                           <div className="flex items-center text-sm text-emerald-600 bg-emerald-50 px-3 py-2 rounded-lg border border-emerald-100 flex-1">
-                             <i className="fa-solid fa-circle-info mr-2 flex-shrink-0"></i>
-                             <span>Jatuhnya <strong>{formatRupiah(pricePerSession)}</strong> / sesi (Total {ptTotalSessions} Sesi)</span>
-                           </div>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Diskon */}
-                  <div className="pt-4 border-t border-slate-200">
-                    <button onClick={() => { setShowDiscount(!showDiscount); if (showDiscount) setManualDiscount(''); }} className="flex items-center justify-between w-full font-semibold text-slate-700 hover:text-indigo-600 transition-colors focus:outline-none">
-                       <div className="flex items-center space-x-2">
-                         <i className="fa-solid fa-sliders text-lg"></i>
-                         <span>Penyesuaian Harga Total</span>
-                       </div>
-                       <i className={`fa-solid ${showDiscount ? 'fa-chevron-up' : 'fa-chevron-down'} text-lg`}></i>
-                    </button>
-                    
-                    {showDiscount && (
-                      <div className="mt-4 animate-in fade-in slide-in-from-top-2">
-                        <div className="relative">
-                          <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-500">Rp</span>
-                          <input type="text" placeholder="0" value={manualDiscount} onChange={(e) => {
-                              const val = e.target.value.replace(/[^0-9]/g, '');
-                              setManualDiscount(val ? parseInt(val, 10).toLocaleString('id-ID') : '');
-                            }} className="w-full pl-10 p-3 rounded-lg border border-slate-300 bg-white focus:ring-2 focus:ring-indigo-500 outline-none transition-all" />
-                        </div>
-                        <p className="text-xs text-slate-500 mt-1">*Nominal diskon akan memotong Total Pembayaran.</p>
-                      </div>
-                    )}
-                  </div>
-
-                </div>
-
-                {/* Struk Akhir */}
-                <div className="bg-slate-800 text-white p-6 relative overflow-hidden">
-                  <i className="fa-solid fa-receipt absolute -right-6 -bottom-6 text-slate-700 opacity-30 text-[120px]"></i>
-                  
-                  <div className="relative z-10">
-                    <div 
-                      className="flex justify-between items-center mb-4 cursor-pointer group"
-                      onClick={() => setShowReceiptDetails(!showReceiptDetails)}
-                    >
-                      <h2 className="text-slate-300 text-sm font-medium uppercase tracking-wider group-hover:text-white transition-colors">Total Pembayaran</h2>
-                      <i className={`fa-solid ${showReceiptDetails ? 'fa-chevron-up' : 'fa-chevron-down'} text-slate-400 group-hover:text-white transition-colors`}></i>
-                    </div>
-                    
-                    {showReceiptDetails && (
-                      <div className="space-y-4 mb-4 animate-in fade-in slide-in-from-top-2">
-                        {includeMembership && (
-                          <div className="flex flex-col border-b border-slate-700 pb-3">
-                            <div className="flex justify-between items-center text-sm">
-                              <span className="text-slate-300">• Membership: <span className="font-medium text-white">{selectedMembership.name}</span></span>
-                              <div className="text-right flex items-center gap-2">
-                                {memGimmickDiff > 0 && <span className="text-slate-500 line-through text-xs">{formatRupiah(memMaxPrice)}</span>}
-                                <span className="text-white font-medium">{formatRupiah(membershipTotal)}</span>
-                              </div>
-                            </div>
-                            <div className="mt-1 ml-3">
-                              <span className="inline-block px-2 py-1 bg-slate-700/50 border border-slate-600 text-slate-300 rounded text-xs">Kategori: {selectedMembership.group}</span>
-                            </div>
-                          </div>
-                        )}
-                        
-                        {includePT && activePTs.length > 0 && (
-                          <div className="flex flex-col">
-                            <span className="text-slate-300 text-sm mb-2">• Personal Trainer (Total {ptTotalSessions} Sesi):</span>
-                            
-                            <div className="space-y-2 ml-3">
-                              {activePTs.map((pt, index) => {
-                                // Hitung max price per item di struk
-                                const max = Math.max(...ptPackages.filter(p => p.name === pt.name).map(p => p.total));
-                                const hasGimmick = max > pt.total;
-
-                                return (
-                                  <div key={index} className="flex justify-between items-center text-sm">
-                                    <span className="text-slate-400">- {pt.name}</span>
-                                    <div className="text-right flex items-center gap-2">
-                                      {hasGimmick && <span className="text-slate-500 line-through text-xs">{formatRupiah(max)}</span>}
-                                      <span className="text-white font-medium">{formatRupiah(pt.total)}</span>
-                                    </div>
-                                  </div>
-                                )
-                              })}
-                            </div>
-                            
-                            <div className="mt-2 ml-3">
-                              <span className="inline-block px-2 py-1 bg-slate-700/50 border border-slate-600 text-slate-300 rounded text-xs">Masa Aktif: {ptTotalValidity} Hari</span>
-                            </div>
-                          </div>
-                        )}
-
-                        {totalAutoDiscount > 0 && (
-                          <div className="mt-3 mb-2 p-2 rounded-lg bg-emerald-500/20 border border-emerald-500/30 flex items-center text-emerald-400 text-sm font-medium">
-                             <i className="fa-solid fa-tag mr-2 flex-shrink-0"></i> Anda Hemat {formatRupiah(totalAutoDiscount)} (Promo Harga Spesial!)
-                          </div>
-                        )}
-
-                        {discountValue > 0 && (
-                          <div className="flex justify-between items-center text-sm text-emerald-400 font-medium mt-4 pt-3 border-t border-slate-700">
-                            <span>Potongan Harga Total</span>
-                            <span>- {formatRupiah(discountValue)}</span>
-                          </div>
-                        )}
-
-                        {!includeMembership && !includePT && (
-                          <div className="text-slate-400 text-sm italic">Belum ada paket yang dipilih.</div>
-                        )}
-                      </div>
-                    )}
-
-                    <div className={`pt-4 ${showReceiptDetails ? 'border-t border-slate-600' : ''}`}>
-                      <div className="flex justify-between items-end">
-                        <span className="text-lg font-medium text-slate-200">Total Akhir</span>
-                        <div className="text-right">
-                          <span className="text-3xl font-bold text-emerald-400 block">{formatRupiah(Math.max(0, grandTotal))}</span>
-                          {grandTotal > 0 && (
-                            <span className="text-sm text-emerald-300/80 mt-1 block font-medium">
-                              (Jatuhnya {formatRupiah(grandTotalPerMonth)} / bulan)
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+            {includeMembership && (
+              <div className="pl-8 p-4 bg-slate-50 rounded-xl border border-slate-200 animate-in fade-in slide-in-from-top-2">
+                <select value={selectedMembershipId} onChange={handleMembershipChange} className="w-full p-3 rounded-lg border border-slate-300 bg-white focus:ring-2 focus:ring-indigo-500 outline-none transition-all font-medium">
+                  {groups.map(groupName => (
+                    <optgroup key={groupName} label={groupName.toUpperCase()}>
+                      {membershipPackages.filter(p => p.group === groupName).map(pkg => (
+                        <option key={pkg.id} value={pkg.id}>{pkg.name}</option>
+                      ))}
+                    </optgroup>
+                  ))}
+                </select>
+                <div className="mt-3 flex items-center text-sm text-emerald-600 bg-emerald-50 px-3 py-2 rounded-lg border border-emerald-100">
+                  <Info size={16} className="mr-2 flex-shrink-0" />
+                  <span>Jatuhnya <strong>{formatRupiah(pricePerMonth)}</strong> / bln (Aktif {selectedMembership.days} Hari)</span>
                 </div>
               </div>
+            )}
+          </div>
 
-              {/* SEKSI INTERNAL REVENUE TERSEMBUNYI */}
-              <div className="w-full max-w-xl mt-4">
-                <button onClick={() => setShowRevenue(!showRevenue)} className="flex items-center justify-center space-x-2 w-full p-3 bg-slate-200 hover:bg-slate-300 text-slate-600 rounded-xl transition-colors font-semibold text-sm">
-                  <i className="fa-solid fa-file-excel text-lg"></i>
-                  <span>Rincian Revenue Diterima (Internal Only)</span>
-                  <i className={`fa-solid ${showRevenue ? 'fa-chevron-up' : 'fa-chevron-down'}`}></i>
-                </button>
+          {/* PT Selection */}
+          <div className="space-y-3">
+            <label className="flex items-center space-x-3 cursor-pointer group">
+              <input type="checkbox" checked={includePT} disabled={isBundling} onChange={(e) => setIncludePT(e.target.checked)} className="w-5 h-5 text-indigo-600 rounded focus:ring-indigo-500 border-gray-300 disabled:opacity-50" />
+              <span className="flex items-center space-x-2 font-semibold text-lg text-slate-700 group-hover:text-indigo-600 transition-colors">
+                <User size={20} />
+                <span>Paket Personal Trainer (PT)</span>
+                {isBundling && <Lock size={16} className="text-amber-500 ml-1" />}
+              </span>
+            </label>
 
-                {showRevenue && (
-                  <div className="mt-3 p-5 bg-white border border-slate-200 rounded-xl shadow-sm animate-in fade-in slide-in-from-top-2">
-                     {includeMembership && (
-                       <div className="mb-4">
-                         <p className="text-xs font-bold text-slate-400 uppercase tracking-wider border-b pb-1 mb-2">Data Membership</p>
-                         <div className="flex justify-between text-sm text-slate-700 mb-1"><span>Revenue Diterima:</span><span className="font-medium">{formatRupiah(revMembership)}</span></div>
-                         <div className="flex justify-between text-sm text-slate-700"><span>Penyesuaian PB1:</span><span className="font-medium">{formatRupiah(pb1Membership)}</span></div>
-                       </div>
-                     )}
+            {isBundling && (
+               <div className="pl-8 text-xs text-amber-600 font-medium">
+                 *Paket Membership Bundling mewajibkan Anda mengambil paket PT minimal {selectedMembership.minPT} Sesi.
+               </div>
+            )}
 
-                     {includePT && activePTs.length > 0 && (
-                       <div className="mb-4">
-                         <p className="text-xs font-bold text-slate-400 uppercase tracking-wider border-b pb-1 mb-2">Data Personal Trainer (Mix {activePTs.length} Paket)</p>
-                         <div className="flex justify-between text-sm text-slate-700 mb-1"><span>Revenue Diterima:</span><span className="font-medium">{formatRupiah(revPT)}</span></div>
-                         <div className="flex justify-between text-sm text-slate-700"><span>Penyesuaian PB1:</span><span className="font-medium">{formatRupiah(pb1PT)}</span></div>
-                       </div>
-                     )}
+            {includePT && (
+              <div className={`pl-8 p-4 bg-slate-50 rounded-xl border animate-in fade-in slide-in-from-top-2 ${isBundling ? 'border-amber-200' : 'border-slate-200'}`}>
+                <select value={selectedPTId} onChange={(e) => setSelectedPTId(e.target.value)} className="w-full p-3 rounded-lg border border-slate-300 bg-white focus:ring-2 focus:ring-indigo-500 outline-none transition-all font-medium">
+                  {availablePTs.map((pkg) => (
+                    <option key={pkg.id} value={pkg.id}>{pkg.name}</option>
+                  ))}
+                </select>
+                <div className="mt-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                   <div className="flex items-center text-sm text-emerald-600 bg-emerald-50 px-3 py-2 rounded-lg border border-emerald-100 flex-1">
+                     <Info size={16} className="mr-2 flex-shrink-0" />
+                     <span>Jatuhnya <strong>{formatRupiah(pricePerSession)}</strong> / sesi</span>
+                   </div>
+                </div>
+              </div>
+            )}
+          </div>
 
-                     <div className="mt-4 pt-3 border-t border-slate-200">
-                       <div className="flex justify-between text-sm text-indigo-700 font-bold mb-1"><span>Total Target Revenue:</span><span>{formatRupiah(totalRevenue)}</span></div>
-                       <div className="flex justify-between text-sm text-slate-500 font-medium"><span>Total Target PB1:</span><span>{formatRupiah(totalPB1)}</span></div>
-                     </div>
-                     
-                     {discountValue > 0 && (
-                       <p className="text-xs text-rose-500 mt-3 italic text-center">*Terdapat potongan harga manual sebesar {formatRupiah(discountValue)} yang akan mengurangi total penerimaan.</p>
-                     )}
-                  </div>
-                )}
+          {/* Diskon Manual */}
+          <div className="pt-4 border-t border-slate-200">
+            <button onClick={() => { setShowDiscount(!showDiscount); if (showDiscount) setManualDiscount(''); }} className="flex items-center justify-between w-full font-semibold text-slate-700 hover:text-indigo-600 transition-colors focus:outline-none">
+               <div className="flex items-center space-x-2">
+                 <Settings2 size={18} />
+                 <span>Penyesuaian Harga Total</span>
+               </div>
+               {showDiscount ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+            </button>
+            
+            {showDiscount && (
+              <div className="mt-4 animate-in fade-in slide-in-from-top-2">
+                <div className="relative">
+                  <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-500">Rp</span>
+                  <input type="text" placeholder="0" value={manualDiscount} onChange={(e) => {
+                      const val = e.target.value.replace(/[^0-9]/g, '');
+                      setManualDiscount(val ? parseInt(val, 10).toLocaleString('id-ID') : '');
+                    }} className="w-full pl-10 p-3 rounded-lg border border-slate-300 bg-white focus:ring-2 focus:ring-indigo-500 outline-none transition-all" />
+                </div>
+                <p className="text-xs text-slate-500 mt-1">*Nominal diskon akan memotong Total Pembayaran.</p>
+              </div>
+            )}
+          </div>
+
+        </div>
+
+        {/* Struk Akhir */}
+        <div className="bg-slate-800 text-white p-6 relative overflow-hidden">
+          <Receipt size={120} className="absolute -right-6 -bottom-6 text-slate-700 opacity-30" />
+          
+          <div className="relative z-10">
+            
+            <div className="flex justify-between items-center mb-4 cursor-pointer group" onClick={() => setShowReceiptDetails(!showReceiptDetails)}>
+              <h2 className="text-slate-300 text-sm font-medium uppercase tracking-wider group-hover:text-white transition-colors">Total Pembayaran</h2>
+              <div className="text-slate-400 group-hover:text-white transition-colors">
+                {showReceiptDetails ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
               </div>
             </div>
-          );
-        }
 
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<App />);
-    </script>
-</body>
-</html>
+            {showReceiptDetails && (
+              <div className="space-y-4 mb-4 animate-in fade-in slide-in-from-top-2">
+                {includeMembership && (
+                  <div className="flex flex-col">
+                    <div className="flex justify-between items-center text-sm">
+                      <span className="text-slate-300">• Membership: <span className="font-medium text-white">{selectedMembership.name}</span></span>
+                      <div className="text-right flex items-center gap-2">
+                        {memGimmickDiff > 0 && <span className="text-slate-500 line-through text-xs">{formatRupiah(memMaxPrice)}</span>}
+                        <span className="text-white font-medium">{formatRupiah(membershipTotal)}</span>
+                      </div>
+                    </div>
+                    <div className="mt-1 ml-3">
+                      <span className="inline-block px-2 py-1 bg-slate-700/50 border border-slate-600 text-slate-300 rounded text-xs">Kategori: {selectedMembership.group}</span>
+                    </div>
+                  </div>
+                )}
+                
+                {includePT && (
+                  <div className="flex flex-col">
+                    <div className="flex justify-between items-center text-sm">
+                      <span className="text-slate-300">• Personal Trainer: <span className="font-medium text-white">{selectedPT.name}</span></span>
+                      <div className="text-right flex items-center gap-2">
+                        {ptGimmickDiff > 0 && <span className="text-slate-500 line-through text-xs">{formatRupiah(ptMaxPrice)}</span>}
+                        <span className="text-white font-medium">{formatRupiah(ptTotal)}</span>
+                      </div>
+                    </div>
+                    <div className="mt-1 ml-3">
+                      <span className="inline-block px-2 py-1 bg-slate-700/50 border border-slate-600 text-slate-300 rounded text-xs">Masa Aktif: {selectedPT.validity} Hari</span>
+                    </div>
+                  </div>
+                )}
+
+                {totalAutoDiscount > 0 && (
+                  <div className="mt-3 mb-2 p-2 rounded-lg bg-emerald-500/20 border border-emerald-500/30 flex items-center text-emerald-400 text-sm font-medium">
+                     <Tag size={16} className="mr-2 flex-shrink-0" /> Anda Hemat {formatRupiah(totalAutoDiscount)} (Promo Harga Spesial!)
+                  </div>
+                )}
+
+                {discountValue > 0 && (
+                  <div className="flex justify-between items-center text-sm text-emerald-400 font-medium mt-4 pt-3 border-t border-slate-700">
+                    <span>Potongan Harga Total</span>
+                    <span>- {formatRupiah(discountValue)}</span>
+                  </div>
+                )}
+
+                {!includeMembership && !includePT && (
+                  <div className="text-slate-400 text-sm italic">Belum ada paket yang dipilih.</div>
+                )}
+              </div>
+            )}
+
+            <div className={`pt-4 ${showReceiptDetails ? 'border-t border-slate-600' : ''}`}>
+              <div className="flex justify-between items-end">
+                <span className="text-lg font-medium text-slate-200">Total Akhir</span>
+                <div className="text-right">
+                  <span className="text-3xl font-bold text-emerald-400 block">{formatRupiah(Math.max(0, grandTotal))}</span>
+                  {grandTotal > 0 && (
+                    <span className="text-sm text-emerald-300/80 mt-1 block font-medium">
+                      (Jatuhnya {formatRupiah(grandTotalPerMonth)} / bulan)
+                    </span>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* SEKSI INTERNAL REVENUE TERSEMBUNYI */}
+      <div className="w-full max-w-xl mt-4">
+        <button onClick={() => setShowRevenue(!showRevenue)} className="flex items-center justify-center space-x-2 w-full p-3 bg-slate-200 hover:bg-slate-300 text-slate-600 rounded-xl transition-colors font-semibold text-sm">
+          <FileSpreadsheet size={18} />
+          <span>Rincian Revenue Diterima (Internal Only)</span>
+          {showRevenue ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+        </button>
+
+        {showRevenue && (
+          <div className="mt-3 p-5 bg-white border border-slate-200 rounded-xl shadow-sm animate-in fade-in slide-in-from-top-2">
+             {includeMembership && (
+               <div className="mb-4">
+                 <p className="text-xs font-bold text-slate-400 uppercase tracking-wider border-b pb-1 mb-2">Data Membership</p>
+                 <div className="flex justify-between text-sm text-slate-700 mb-1"><span>Revenue Diterima:</span><span className="font-medium">{formatRupiah(revMembership)}</span></div>
+                 <div className="flex justify-between text-sm text-slate-700"><span>Penyesuaian PB1:</span><span className="font-medium">{formatRupiah(pb1Membership)}</span></div>
+               </div>
+             )}
+
+             {includePT && (
+               <div className="mb-4">
+                 <p className="text-xs font-bold text-slate-400 uppercase tracking-wider border-b pb-1 mb-2">Data Personal Trainer</p>
+                 <div className="flex justify-between text-sm text-slate-700 mb-1"><span>Revenue Diterima:</span><span className="font-medium">{formatRupiah(revPT)}</span></div>
+                 <div className="flex justify-between text-sm text-slate-700"><span>Penyesuaian PB1:</span><span className="font-medium">{formatRupiah(pb1PT)}</span></div>
+               </div>
+             )}
+
+             <div className="mt-4 pt-3 border-t border-slate-200">
+               <div className="flex justify-between text-sm text-indigo-700 font-bold mb-1"><span>Total Target Revenue:</span><span>{formatRupiah(totalRevenue)}</span></div>
+               <div className="flex justify-between text-sm text-slate-500 font-medium"><span>Total Target PB1:</span><span>{formatRupiah(totalPB1)}</span></div>
+             </div>
+             
+             {discountValue > 0 && (
+               <p className="text-xs text-rose-500 mt-3 italic text-center">*Terdapat potongan harga manual sebesar {formatRupiah(discountValue)} yang mengurangi total penerimaan.</p>
+             )}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+
