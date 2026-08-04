@@ -19,13 +19,6 @@
         .glass-effect { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
         .premium-shadow { box-shadow: 0 20px 40px -15px rgba(0,0,0,0.1); }
         
-        /* Layar Kunci */
-        #lockScreen {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #0f172a; z-index: 9999;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-        }
-        
         /* Custom Select Styling */
         select { 
             appearance: none; 
@@ -40,13 +33,13 @@
 <body class="antialiased min-h-screen flex flex-col items-center justify-center p-4 sm:p-8">
 
     <!-- LAYAR KUNCI PASSWORD -->
-    <div id="lockScreen">
+    <div id="lockScreen" class="fixed inset-0 w-full h-full bg-[#0f172a] z-[9999] flex flex-col items-center justify-center">
         <div class="bg-[#1e293b] p-8 rounded-[2rem] w-[90%] max-w-sm text-center shadow-2xl border border-slate-700">
             <div class="w-20 h-20 bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-5 border border-slate-600 shadow-inner text-4xl">
                 🔒
             </div>
             <h2 class="text-2xl font-bold text-white mb-2">Akses Terkunci</h2>
-            <p class="text-slate-400 text-sm mb-8 font-medium">Masukkan kata sandi untuk menggunakan Willfitness Calculator Pro.</p>
+            <p class="text-slate-400 text-sm mb-8 font-medium">Masukkan kata sandi untuk menggunakan Willfitness Calculator.</p>
             
             <div class="relative w-full mb-4">
                 <input type="password" id="inputPassword" placeholder="Masukkan Password" 
@@ -218,85 +211,6 @@
     </div>
 
     <script>
-        // ==================== SISTEM PASSWORD ====================
-        const PASSWORD_BENAR = "Rahasia123@";
-        
-        const lockScreen = document.getElementById('lockScreen');
-        const mainApp = document.getElementById('mainApp');
-        const revenueApp = document.getElementById('revenueApp');
-        const inputPassword = document.getElementById('inputPassword');
-        const btnUnlock = document.getElementById('btnUnlock');
-        const errorMsg = document.getElementById('errorMsg');
-        
-        const togglePassword = document.getElementById('togglePassword');
-        const eyeShow = document.getElementById('eyeShow');
-        const eyeHide = document.getElementById('eyeHide');
-
-        // Toggle visibility password
-        togglePassword.addEventListener('click', function () {
-            const type = inputPassword.getAttribute('type') === 'password' ? 'text' : 'password';
-            inputPassword.setAttribute('type', type);
-            
-            if (type === 'text') {
-                eyeShow.classList.remove('hidden');
-                eyeHide.classList.add('hidden');
-            } else {
-                eyeShow.classList.add('hidden');
-                eyeHide.classList.remove('hidden');
-            }
-        });
-
-        // FUNGSI MEMBUKA APLIKASI
-        function unlockApp() {
-            // Sembunyikan layar kunci
-            lockScreen.classList.add('hidden');
-            
-            // Tampilkan aplikasi utama
-            mainApp.classList.remove('hidden');
-            revenueApp.classList.remove('hidden');
-            
-            // Re-inisialisasi agar kalkulasi langsung jalan saat dibuka
-            initMembershipOptions();
-            
-            const initialPT1 = document.querySelector('.pt-select-main');
-            if(initialPT1) {
-                updateSelectOptions(initialPT1, 0);
-            }
-            
-            // Lakukan kalkulasi awal
-            calcAll(); 
-        }
-
-        // CEK PASSWORD SAAT TOMBOL DIKLIK
-        function checkPassword() {
-            if (inputPassword.value === PASSWORD_BENAR) {
-                // Simpan sesi ke local storage
-                localStorage.setItem('willfitness_auth_premium', 'true');
-                
-                // Buka aplikasi
-                unlockApp();
-            } else {
-                // Tampilkan pesan error
-                errorMsg.classList.remove('hidden');
-                inputPassword.value = '';
-                inputPassword.focus();
-                
-                // Animasi getar merah
-                const lockContainer = lockScreen.querySelector('.bg-\\[\\#1e293b\\]');
-                lockContainer.classList.add('animate-pulse');
-                setTimeout(() => {
-                    lockContainer.classList.remove('animate-pulse');
-                }, 500);
-            }
-        }
-
-        // BINDING EVENT PASSWORD
-        btnUnlock.addEventListener('click', checkPassword);
-        inputPassword.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') checkPassword();
-        });
-
-
         // ==================== DATA MASTER ====================
         const membershipPackages = [
           { id: 'o1', group: 'One Club', name: '1 Bulan', total: 616000, rev: 560000, pb1: 56000, days: 30, minPT: 0 },
@@ -308,7 +222,7 @@
           { id: 'a1', group: 'All Club', name: '3 Bulan', total: 1419000, rev: 1290000, pb1: 129000, days: 90, minPT: 0 },
           { id: 'a2', group: 'All Club', name: '6 Bulan', total: 2112000, rev: 1920000, pb1: 192000, days: 180, minPT: 0 },
           { id: 'a3', group: 'All Club', name: '12 Bulan', total: 2838000, rev: 2580000, pb1: 258000, days: 360, minPT: 0 },
-          { id: 'a3_new', group: 'All Club', name: '12+1 Bulan', total: 3075000, rev: 2795909, pb1: 279091, days: 390, minPT: 0 }, // Paket Baru (12+1)
+          { id: 'a3_new', group: 'All Club', name: '12+1 Bulan', total: 3075000, rev: 2795909, pb1: 279091, days: 390, minPT: 0 },
           { id: 'a4', group: 'All Club', name: '12+2 Bulan', total: 3619000, rev: 3290000, pb1: 329000, days: 420, minPT: 0 },
 
           { id: 'b1', group: 'Bundling (With PT)', name: '3 Bulan', total: 660000, rev: 600000, pb1: 60000, days: 90, minPT: 24 },
@@ -345,6 +259,16 @@
         let ptRowCounter = 1;
 
         const el = {
+            lockScreen: document.getElementById('lockScreen'),
+            mainApp: document.getElementById('mainApp'),
+            revenueApp: document.getElementById('revenueApp'),
+            inputPassword: document.getElementById('inputPassword'),
+            btnUnlock: document.getElementById('btnUnlock'),
+            errorMsg: document.getElementById('errorMsg'),
+            togglePassword: document.getElementById('togglePassword'),
+            eyeShow: document.getElementById('eyeShow'),
+            eyeHide: document.getElementById('eyeHide'),
+
             checkMem: document.getElementById('checkMember'),
             boxMem: document.getElementById('boxMember'),
             selMem: document.getElementById('selectMember'),
@@ -377,11 +301,76 @@
             arrRev: document.getElementById('arrowRevenue'),
         };
 
+        // ==================== SISTEM KEAMANAN (ANTI-NYANGKUT) ====================
+
+        el.togglePassword.addEventListener('click', function () {
+            const type = el.inputPassword.getAttribute('type') === 'password' ? 'text' : 'password';
+            el.inputPassword.setAttribute('type', type);
+            
+            if (type === 'text') {
+                el.eyeShow.classList.remove('hidden');
+                el.eyeHide.classList.add('hidden');
+            } else {
+                el.eyeShow.classList.add('hidden');
+                el.eyeHide.classList.remove('hidden');
+            }
+        });
+
+        function performUnlock() {
+            // PERBAIKAN FATAL: Memaksa display menjadi 'none' agar benar-benar hilang
+            el.lockScreen.style.display = 'none'; 
+            
+            el.mainApp.classList.remove('hidden');
+            el.revenueApp.classList.remove('hidden');
+            
+            initMembershipOptions();
+            
+            setTimeout(() => {
+                const initialPT1 = document.querySelector('.pt-select-main');
+                if(initialPT1) {
+                    updateSelectOptions(initialPT1, 0);
+                    initialPT1.addEventListener('change', calcAll);
+                }
+                calcAll(); 
+            }, 50);
+        }
+
+        function checkPassword() {
+            if (el.inputPassword.value === "Rahasia123@") {
+                // Simpan sandi ke memori HP/Laptop dengan aman
+                try { localStorage.setItem('willfitness_auth_premium', 'true'); } catch(e) { console.warn("Memori lokal dimatikan browser"); }
+                performUnlock();
+            } else {
+                el.errorMsg.classList.remove('hidden');
+                el.inputPassword.value = '';
+                el.inputPassword.focus();
+                
+                const lockContainer = el.lockScreen.querySelector('.bg-\\[\\#1e293b\\]');
+                lockContainer.classList.add('animate-pulse');
+                setTimeout(() => lockContainer.classList.remove('animate-pulse'), 500);
+            }
+        }
+
+        el.btnUnlock.addEventListener('click', checkPassword);
+        el.inputPassword.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') checkPassword();
+        });
+
+        // Cek jika sudah pernah login sebelumnya
+        try {
+            if (localStorage.getItem('willfitness_auth_premium') === 'true') {
+                performUnlock();
+            }
+        } catch(e) {
+            // Mengabaikan jika browser memblokir local storage
+        }
+
+
+        // ==================== LOGIKA KALKULATOR UTAMA ====================
         function formatRp(num) { 
             return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(num); 
         }
 
-        // BIKIN OPSI MEMBERSHIP
         function initMembershipOptions() {
             if(!el.selMem) return;
             el.selMem.innerHTML = '';
@@ -399,11 +388,10 @@
             });
         }
 
-        // UPDATE OPSI PADA SEBUAH SELECT PT
         function updateSelectOptions(selectElem, minSessions = 0) {
             if (!selectElem) return;
             const currentMin = parseInt(selectElem.getAttribute('data-min') || '-1');
-            if (currentMin === minSessions) return; // Skip jika tidak ada perubahan syarat
+            if (currentMin === minSessions) return; 
 
             const currentVal = selectElem.value;
             selectElem.innerHTML = '';
@@ -419,7 +407,6 @@
             if (filtered.find(p => p.id === currentVal)) selectElem.value = currentVal;
         }
 
-        // TAMBAH BARIS PT DINAMIS
         if(el.btnAddPT) {
             el.btnAddPT.addEventListener('click', () => {
                 ptRowCounter++;
@@ -458,21 +445,18 @@
             });
         }
 
-        // FUNGSI KALKULASI UTAMA (DILINDUNGI DARI ERROR)
         function calcAll() {
             try {
-                if(!el.checkMem || !el.selMem) return; // Pelindung jika HTML belum siap
+                if(!el.checkMem || !el.selMem) return; 
 
                 const isMem = el.checkMem.checked;
                 const actMem = membershipPackages.find(p => p.id === el.selMem.value) || membershipPackages[0];
                 const isBund = isMem && actMem.minPT > 0;
 
-                // Tampil/Sembunyi Membership
                 isMem ? el.boxMem.classList.remove('hidden') : el.boxMem.classList.add('hidden');
 
                 const ptSelects = document.querySelectorAll('.pt-select');
 
-                // Paksaan Bundling PT 1
                 if (isBund) {
                     el.checkPT.checked = true;
                     el.checkPT.disabled = true;
@@ -487,7 +471,6 @@
                 }
 
                 const isPT = el.checkPT.checked;
-                // Tampil/Sembunyi PT
                 isPT ? el.boxPT.classList.remove('hidden') : el.boxPT.classList.add('hidden');
 
                 let actPTs = [];
@@ -516,7 +499,6 @@
                     if(el.infoPTTotSess) el.infoPTTotSess.textContent = pTotSess;
                 }
 
-                // Gimmick
                 let memMax = actMem.total;
                 if (isMem) {
                     const pkgs = membershipPackages.filter(p => p.name === actMem.name && p.group === actMem.group).map(p => p.total);
@@ -525,7 +507,6 @@
                 const memGim = isMem && memMax > actMem.total ? memMax - actMem.total : 0;
                 const autoDisc = memGim + ptGim;
 
-                // Total
                 const mTot = isMem ? actMem.total : 0;
                 const sub = mTot + pTotal;
                 const grand = Math.max(0, sub - rawDiscountValue);
@@ -535,7 +516,6 @@
                 else if (isPT && actPTs.length > 0) effMo = Math.max(1, Math.round(pTotVal / 30));
                 const gMo = grand > 0 ? grand / effMo : 0;
 
-                // Render Struk
                 if (el.boxRecDet) {
                     el.boxRecDet.innerHTML = '';
                     if (showReceiptDetails) {
@@ -584,7 +564,6 @@
                 if(el.textGrand) el.textGrand.textContent = formatRp(grand);
                 if(el.textGrandMo) el.textGrandMo.textContent = grand > 0 ? `(Hanya ${formatRp(gMo)} / bln)` : '';
 
-                // Render Revenue
                 if(el.boxRev) {
                     el.boxRev.innerHTML = '';
                     if (isMem) {
@@ -618,17 +597,10 @@
             }
         }
 
-        // --- EVENT BINDING ---
         if(el.checkMem) el.checkMem.addEventListener('change', calcAll);
         if(el.selMem) el.selMem.addEventListener('change', calcAll);
         if(el.checkPT) el.checkPT.addEventListener('change', calcAll);
         
-        // Listener statis untuk PT 1 (Harus dicek setelah UI muncul)
-        function bindPT1() {
-            const initialPT1 = document.querySelector('.pt-select-main');
-            if(initialPT1) initialPT1.addEventListener('change', calcAll);
-        }
-
         if(el.btnDisc) {
             el.btnDisc.addEventListener('click', () => {
                 showDiscount = !showDiscount;
@@ -664,25 +636,6 @@
                 showRevenue ? el.boxRev.classList.remove('hidden') : el.boxRev.classList.add('hidden');
                 el.arrRev.textContent = showRevenue ? '▲' : '▼';
             });
-        }
-
-        // ==================== CEK STATUS LOGIN AWAL ====================
-        if (localStorage.getItem('willfitness_auth_premium') === 'true') {
-            // Jika sudah login, langsung buka (tanpa animasi gembok)
-            unlockApp();
-        }
-
-        // Fungsi pendukung untuk menjalankan kalkulasi setelah buka gembok
-        function initializeAppAfterUnlock() {
-            bindPT1();
-            calcAll();
-        }
-
-        // Panggil setelah unlockApp berjalan
-        const originalUnlockApp = unlockApp;
-        unlockApp = function() {
-            originalUnlockApp();
-            setTimeout(initializeAppAfterUnlock, 100); // Beri jeda 100ms agar DOM siap
         }
 
     </script>
