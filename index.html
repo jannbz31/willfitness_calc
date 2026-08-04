@@ -48,8 +48,14 @@
             <h2 class="text-2xl font-bold text-white mb-2">Akses Terkunci</h2>
             <p class="text-slate-400 text-sm mb-8 font-medium">Masukkan kata sandi untuk menggunakan Willfitness Calculator Pro.</p>
             
-            <input type="password" id="inputPassword" placeholder="Masukkan Password" 
-                   class="w-full p-4 rounded-xl border border-slate-600 bg-slate-800 text-white placeholder-slate-500 mb-4 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-center tracking-widest font-bold shadow-inner">
+            <div class="relative w-full mb-4">
+                <input type="password" id="inputPassword" placeholder="Masukkan Password" 
+                       class="w-full p-4 rounded-xl border border-slate-600 bg-slate-800 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-center tracking-widest font-bold shadow-inner pr-12">
+                <button id="togglePassword" type="button" class="absolute inset-y-0 right-0 flex items-center px-4 text-slate-400 hover:text-white outline-none">
+                    <svg id="eyeShow" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="hidden"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                    <svg id="eyeHide" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" x2="22" y1="2" y2="22"/></svg>
+                </button>
+            </div>
             
             <button id="btnUnlock" class="w-full bg-emerald-500 hover:bg-emerald-400 text-white font-bold py-4 px-4 rounded-xl transition-all shadow-lg hover:shadow-emerald-500/30">
                 Buka Kalkulator
@@ -221,28 +227,51 @@
         const inputPassword = document.getElementById('inputPassword');
         const btnUnlock = document.getElementById('btnUnlock');
         const errorMsg = document.getElementById('errorMsg');
+        
+        const togglePassword = document.getElementById('togglePassword');
+        const eyeShow = document.getElementById('eyeShow');
+        const eyeHide = document.getElementById('eyeHide');
+
+        // Toggle visibility password
+        togglePassword.addEventListener('click', function () {
+            const type = inputPassword.getAttribute('type') === 'password' ? 'text' : 'password';
+            inputPassword.setAttribute('type', type);
+            
+            if (type === 'text') {
+                eyeShow.classList.remove('hidden');
+                eyeHide.classList.add('hidden');
+            } else {
+                eyeShow.classList.add('hidden');
+                eyeHide.classList.remove('hidden');
+            }
+        });
 
         function checkPassword() {
             if (inputPassword.value === PASSWORD_BENAR) {
-                // Simpan status login di memori browser agar tidak perlu login lagi
                 localStorage.setItem('willfitness_auth_premium', 'true');
-
-                // Sembunyikan layar kunci, tampilkan aplikasi
-                lockScreen.classList.add('hidden');
-                mainApp.classList.remove('hidden');
-                revenueApp.classList.remove('hidden');
-                calcAll(); // Jalankan hitungan saat pertama masuk
+                unlockApp();
             } else {
                 errorMsg.classList.remove('hidden');
                 inputPassword.value = '';
                 inputPassword.focus();
                 
-                // Efek getar untuk password salah
                 lockScreen.querySelector('.bg-\\[\\#1e293b\\]').classList.add('animate-pulse');
                 setTimeout(() => {
                     lockScreen.querySelector('.bg-\\[\\#1e293b\\]').classList.remove('animate-pulse');
                 }, 500);
             }
+        }
+
+        function unlockApp() {
+            lockScreen.classList.add('hidden');
+            mainApp.classList.remove('hidden');
+            revenueApp.classList.remove('hidden');
+            
+            // Render UI
+            initMembershipOptions();
+            const initialPT1 = document.querySelector('.pt-select-main');
+            if(initialPT1) updateSelectOptions(initialPT1, 0);
+            calcAll(); 
         }
 
         btnUnlock.addEventListener('click', checkPassword);
