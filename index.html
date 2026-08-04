@@ -2,231 +2,669 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Willfitness Calculator Pro</title>
-    
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    
-    <!-- Tailwind CSS -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>WILLFITNESS MEMBER LIST</title>
     <script src="https://cdn.tailwindcss.com"></script>
-
     <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f1f5f9; }
-        .smooth-transition { transition: all 0.3s ease-in-out; }
-        .glass-effect { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
-        .premium-shadow { box-shadow: 0 20px 40px -15px rgba(0,0,0,0.1); }
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
         
-        /* Custom Select Styling */
-        select { appearance: none; background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e"); background-position: right 0.5rem center; background-repeat: no-repeat; background-size: 1.5em 1.5em; padding-right: 2.5rem; }
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            -webkit-tap-highlight-color: transparent;
+            overflow: hidden; 
+        }
+
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        /* Warna Status Membership */
+        .status-active { background-color: rgba(16, 185, 129, 0.1); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.2); }
+        .status-warning { background-color: rgba(245, 158, 11, 0.1); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.2); }
+        .status-expired { background-color: rgba(239, 68, 68, 0.1); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.2); }
+        
+        .row-birthday { 
+            background: linear-gradient(90deg, rgba(15,23,42,1) 0%, rgba(49,16,66,0.3) 100%);
+            border: 1px solid rgba(217, 70, 239, 0.4);
+            box-shadow: -4px 0 0px #d946ef, 0 4px 20px -2px rgba(217, 70, 239, 0.1);
+        }
+
+        .row-standard {
+            background-color: #0f172a;
+            border: 1px solid rgba(30, 41, 59, 0.8);
+        }
+
+        .glass-nav {
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+        }
+
+        .stat-card {
+            background: #0f172a;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.3);
+            border: 1px solid #1e293b;
+        }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
+        
+        /* Tipe Transaksi Badge */
+        .type-njm { background-color: #3b82f6; color: #0f172a; } 
+        .type-renewal { background-color: #a855f7; color: #ffffff; } 
     </style>
 </head>
-<body class="antialiased min-h-screen flex flex-col items-center justify-center p-4 sm:p-8">
+<body class="bg-[#020617] text-slate-100 h-screen w-full flex">
 
-    <div class="w-full max-w-2xl glass-effect rounded-[2rem] premium-shadow border border-white overflow-hidden relative">
+    <!-- DESKTOP SIDEBAR -->
+    <aside class="hidden md:flex flex-col w-[280px] bg-[#090d22] border-r border-slate-800/80 z-50 h-full shrink-0">
+        <div class="p-8 border-b border-slate-800/80">
+            <h1 class="text-2xl font-extrabold text-white tracking-tighter uppercase leading-none">
+                WILL<span class="text-sky-400">FITNESS</span>
+            </h1>
+            <p class="text-[10px] font-bold text-sky-400/80 uppercase tracking-widest mt-2">MEMBER LIST SYSTEM</p>
+        </div>
+        <div class="flex-1 py-8 px-6 space-y-3">
+            <button onclick="switchTab('list')" id="desk-nav-list" class="w-full flex items-center gap-4 px-5 py-3.5 rounded-xl text-sm font-bold transition-all text-sky-400 bg-sky-500/10 border border-sky-500/20">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16" /></svg>
+                Database Member
+            </button>
+            <button onclick="switchTab('add')" id="desk-nav-add" class="w-full flex items-center gap-4 px-5 py-3.5 rounded-xl text-sm font-bold transition-all text-slate-400 hover:text-white hover:bg-slate-800/50 border border-transparent">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
+                Tambah / Edit
+            </button>
+            <button onclick="switchTab('data')" id="desk-nav-data" class="w-full flex items-center gap-4 px-5 py-3.5 rounded-xl text-sm font-bold transition-all text-slate-400 hover:text-white hover:bg-slate-800/50 border border-transparent">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
+                Laporan & Keuangan
+            </button>
+        </div>
+        <div class="p-6 border-t border-slate-800/80">
+            <p class="text-[10px] text-slate-500 font-bold uppercase tracking-widest text-center flex items-center justify-center gap-2">
+                <span class="relative flex h-2 w-2">
+                    <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                </span>
+                Sistem Lokal (Offline)
+            </p>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT AREA -->
+    <div class="flex-1 flex flex-col h-full relative overflow-hidden bg-[#020617]">
         
-        <!-- Background Ornaments -->
-        <div class="absolute top-0 left-0 w-full h-48 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 overflow-hidden z-0">
-            <div class="absolute -top-24 -right-24 w-48 h-48 bg-emerald-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20"></div>
-            <div class="absolute -bottom-24 -left-24 w-64 h-64 bg-indigo-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20"></div>
-        </div>
-
-        <!-- HEADER -->
-        <div class="relative z-10 p-8 text-center">
-            <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 mb-4 shadow-lg text-emerald-400">
-                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.4 14.4 9.6 9.6"/><path d="M18.65 21.35a2 2 0 0 1-2.828 0l-2.829-2.828a2 2 0 0 1 0-2.828l2.829-2.829a2 2 0 0 1 2.828 0l2.829 2.829a2 2 0 0 1 0 2.828z"/><path d="m21.5 21.5-1.4-1.4"/><path d="M3.9 3.9 2.5 2.5"/><path d="M6.404 12.768a2 2 0 0 1-2.829 0L.747 9.939a2 2 0 0 1 0-2.828l2.828-2.829a2 2 0 0 1 2.829 0l2.828 2.829a2 2 0 0 1 0 2.828z"/></svg>
-            </div>
-            <h1 class="text-3xl font-extrabold text-white tracking-tight">Willfitness Calculator</h1>
-            <p class="text-slate-300 text-sm mt-2 font-medium tracking-wide">ESTIMASI BIAYA & PENAWARAN</p>
-        </div>
-
-        <!-- KONTEN FORM -->
-        <div class="relative z-10 bg-white p-6 sm:p-8 rounded-t-[2.5rem] -mt-6 shadow-[0_-10px_40px_rgba(0,0,0,0.05)]">
-            <div class="space-y-8">
-                
-                <!-- 1. MEMBERSHIP SECTION -->
-                <div class="bg-slate-50/50 rounded-2xl p-5 sm:p-6 border border-slate-100 smooth-transition hover:border-indigo-100 hover:shadow-md hover:bg-white">
-                    <label class="flex items-center justify-between cursor-pointer group mb-4">
-                        <div class="flex items-center space-x-3">
-                            <div class="w-10 h-10 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/><path d="M18 14h-8"/><path d="M15 18h-5"/><path d="M10 6h8v4h-8V6Z"/></svg>
-                            </div>
-                            <h2 class="text-lg font-bold text-slate-800">Paket Membership</h2>
-                        </div>
-                        <input type="checkbox" id="checkMember" checked class="w-6 h-6 rounded-md border-slate-300 cursor-pointer accent-indigo-600"/>
-                    </label>
-                    
-                    <div id="boxMember" class="mt-4 smooth-transition">
-                        <select id="selectMember" class="w-full p-4 rounded-xl border border-slate-200 bg-white text-slate-700 font-semibold focus:ring-4 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none hover:border-slate-300 transition-all shadow-sm">
-                            <!-- Diisi Otomatis JS -->
-                        </select>
-                        <div class="mt-3 flex items-center justify-between text-sm bg-emerald-50/80 px-4 py-3 rounded-xl border border-emerald-100/50">
-                            <span class="text-emerald-700 flex items-center"><span class="mr-2">💡</span>Estimasi Bulanan:</span>
-                            <span class="font-bold text-emerald-800"><span id="infoMemberPerMonth">Rp 0</span><span class="text-xs text-emerald-600/70 font-medium ml-1">/ bln (Aktif <span id="infoMemberDays">0</span> Hari)</span></span>
-                        </div>
-                    </div>
+        <header class="bg-[#090d22]/90 border-b border-slate-800/80 px-6 py-5 shadow-lg backdrop-blur-md shrink-0">
+            <div class="max-w-6xl mx-auto flex justify-between items-center">
+                <div class="md:hidden flex items-center gap-2">
+                    <h1 class="text-xl font-extrabold text-white tracking-tighter uppercase">
+                        WILL<span class="text-sky-400">FITNESS</span>
+                    </h1>
                 </div>
-
-                <!-- 2. PERSONAL TRAINER SECTION -->
-                <div class="bg-slate-50/50 rounded-2xl p-5 sm:p-6 border border-slate-100 smooth-transition hover:border-indigo-100 hover:shadow-md hover:bg-white relative">
-                    <label class="flex items-center justify-between cursor-pointer group mb-4">
-                        <div class="flex items-center space-x-3">
-                            <div class="w-10 h-10 rounded-xl bg-orange-100 text-orange-600 flex items-center justify-center">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                            </div>
-                            <h2 class="text-lg font-bold text-slate-800 flex items-center">
-                                Personal Trainer 
-                                <span id="lockIcon" class="hidden ml-2 flex items-center justify-center w-5 h-5 bg-amber-100 text-amber-600 rounded-full" title="Terkunci Bundling">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                                </span>
-                            </h2>
-                        </div>
-                        <input type="checkbox" id="checkPT" class="w-6 h-6 rounded-md border-slate-300 cursor-pointer accent-indigo-600"/>
-                    </label>
-
-                    <div id="warnBundling" class="hidden mb-4 px-4 py-2.5 bg-amber-50 text-amber-700 text-xs font-semibold rounded-lg border border-amber-200/50 flex items-start">
-                        <span class="mr-2">⚠️</span> Kategori Bundling mewajibkan Kolom PT 1 mencapai batas minimal sesi.
-                    </div>
-
-                    <div id="boxPT" class="hidden mt-2 space-y-4 smooth-transition">
-                        <!-- 3 KOLOM MIX -->
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <div class="space-y-1.5">
-                                <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-1">Sesi Utama (PT 1)</label>
-                                <select id="selectPT1" class="w-full p-3.5 rounded-xl border border-slate-200 bg-white text-slate-800 font-semibold focus:ring-4 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none shadow-sm"></select>
-                            </div>
-                            <div class="space-y-1.5">
-                                <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-1">Mix 1 (PT 2)</label>
-                                <select id="selectPT2" class="w-full p-3.5 rounded-xl border border-slate-200 bg-white text-slate-500 font-medium focus:ring-4 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none shadow-sm"></select>
-                            </div>
-                            <div class="space-y-1.5">
-                                <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-1">Mix 2 (PT 3)</label>
-                                <select id="selectPT3" class="w-full p-3.5 rounded-xl border border-slate-200 bg-white text-slate-500 font-medium focus:ring-4 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none shadow-sm"></select>
-                            </div>
-                        </div>
-
-                        <div class="flex items-center justify-between text-sm bg-emerald-50/80 px-4 py-3 rounded-xl border border-emerald-100/50">
-                            <span class="text-emerald-700 flex items-center"><span class="mr-2">⚡</span>Estimasi per Sesi:</span>
-                            <span class="font-bold text-emerald-800"><span id="infoPTPerSession">Rp 0</span><span class="text-xs text-emerald-600/70 font-medium ml-1">(Total <span id="infoPTTotalSessions">0</span> Sesi)</span></span>
-                        </div>
-                    </div>
+                <div class="hidden md:block">
+                    <h2 class="text-lg font-bold text-slate-200" id="desktop-page-title">Database Member</h2>
                 </div>
-
-                <!-- 3. DISKON MANUAL -->
-                <div class="pt-2">
-                    <button id="btnDiscount" class="flex items-center justify-between w-full p-4 rounded-xl bg-slate-100/50 text-slate-600 font-semibold hover:bg-slate-100 hover:text-indigo-600 transition-colors outline-none group border border-transparent hover:border-slate-200">
-                        <div class="flex items-center space-x-3">
-                            <svg class="text-slate-400 group-hover:text-indigo-500" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><circle cx="12" cy="12" r="4"/></svg>
-                            <span>Terapkan Potongan Harga Tambahan</span>
-                        </div>
-                        <span id="arrowDiscount" class="text-xs transition-transform duration-300 text-slate-400 group-hover:text-indigo-500">▼</span>
+                <div class="flex items-center gap-3">
+                    <button onclick="toggleFullscreen()" id="btn-fs" class="p-2 text-slate-400 hover:text-sky-400 bg-slate-900 rounded-lg border border-slate-800 transition-all duration-200" title="Layar Penuh">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+                        </svg>
                     </button>
-                    
-                    <div id="boxDiscount" class="hidden mt-3 smooth-transition">
-                        <div class="relative group">
-                            <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-slate-400 font-bold">Rp</span>
-                            <input type="text" id="inputDiscount" placeholder="0" class="w-full pl-12 p-4 rounded-xl border border-slate-200 bg-white font-bold text-slate-800 focus:ring-4 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none shadow-sm placeholder-slate-300">
-                        </div>
-                        <p class="text-[11px] text-slate-400 mt-2 ml-2 font-medium">*Nominal ini langsung memotong Total Pembayaran Akhir.</p>
+                    <div class="bg-sky-500/10 border border-sky-500/20 text-sky-400 text-[10px] font-black px-4 py-2 rounded-full tracking-wider flex items-center gap-1.5" title="Total Member Ditemukan">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" /></svg>
+                        <span id="stats-badge">0</span>
                     </div>
                 </div>
+            </div>
+        </header>
+
+        <!-- Scrollable Main Content -->
+        <main class="flex-1 overflow-y-auto p-4 md:p-8 pb-28 md:pb-8">
+            <div class="max-w-6xl mx-auto">
+                
+                <!-- TAB DAFTAR MEMBER -->
+                <section id="tab-list" class="tab-content active">
+                    <!-- Kontrol Pencarian, Pengurutan & Filter -->
+                    <div class="flex flex-col lg:flex-row gap-3 mb-4">
+                        <!-- Kolom Pencarian -->
+                        <div class="relative flex-1">
+                            <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-slate-400">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                            </span>
+                            <input type="text" id="search-input" placeholder="Cari nama member..." 
+                                class="w-full pl-11 pr-4 py-3.5 bg-[#0f172a] border border-slate-800 rounded-xl focus:ring-1 focus:ring-sky-500 outline-none transition-all text-sm text-white placeholder-slate-500" 
+                                oninput="renderMembers()">
+                        </div>
+
+                        <!-- Kontrol Sortir & Tombol Filter -->
+                        <div class="flex items-center gap-2 w-full lg:w-auto overflow-x-auto pb-1 lg:pb-0 hide-scrollbar">
+                            <div class="flex gap-2 w-full md:w-auto min-w-max">
+                                <select id="sort-select" onchange="applyDefaultSortDirection()" class="w-44 md:w-48 p-3.5 bg-[#0f172a] text-slate-200 rounded-xl border border-slate-800 focus:ring-1 focus:ring-sky-500 outline-none text-xs font-semibold cursor-pointer appearance-none">
+                                    <option value="transaction-date">Urut: Tgl Transaksi</option>
+                                    <option value="start-date">Urut: Tgl Mulai Member</option>
+                                    <option value="birthday-date">Urut: Ulang Tahun Terdekat</option>
+                                    <option value="chat-date">Urut: Terakhir Di-Chat</option>
+                                    <option value="membership-expiry">Urut: Sisa Hari Terkecil</option>
+                                </select>
+                                <button onclick="toggleSortOrder()" id="btn-sort-order" class="p-3.5 bg-[#0f172a] text-sky-400 rounded-xl border border-slate-800 hover:bg-slate-800 transition-all cursor-pointer flex-shrink-0" title="Ubah Arah Urutan">
+                                    <svg id="sort-arrow" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 transition-transform duration-300 transform rotate-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+                                </button>
+                                <button onclick="toggleFilterPanel()" class="p-3.5 bg-[#0f172a] text-slate-400 hover:text-sky-400 rounded-xl border border-slate-800 hover:bg-slate-800 transition-all cursor-pointer flex-shrink-0 flex items-center gap-2" title="Filter Spesifik">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" /></svg>
+                                    <span class="hidden md:block text-xs font-bold">Filter</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Panel Filter Lanjutan -->
+                    <div id="filter-panel" class="hidden mb-6 p-5 bg-[#0f172a] border border-slate-800 rounded-2xl shadow-lg relative">
+                        <h3 class="text-[10px] font-bold text-sky-400 uppercase tracking-widest mb-4">Filter Spesifik</h3>
+                        <button onclick="toggleFilterPanel()" class="absolute top-4 right-4 text-slate-500 hover:text-white transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
+                        </button>
+                        
+                        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-5">
+                            <div>
+                                <label class="text-[10px] text-slate-500 block mb-1.5 uppercase font-semibold tracking-wider">Status</label>
+                                <select id="filter-status" class="w-full p-2.5 bg-[#020617] text-white text-xs rounded-xl border border-slate-700 outline-none focus:border-sky-500">
+                                    <option value="all">Semua Status</option>
+                                    <option value="active">Aktif</option>
+                                    <option value="warning">Hampir Habis (Limit)</option>
+                                    <option value="expired">Habis (Expired)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="text-[10px] text-slate-500 block mb-1.5 uppercase font-semibold tracking-wider">Tipe</label>
+                                <select id="filter-type" class="w-full p-2.5 bg-[#020617] text-white text-xs rounded-xl border border-slate-700 outline-none focus:border-sky-500">
+                                    <option value="all">Semua Tipe</option>
+                                    <option value="NJM">NJM</option>
+                                    <option value="Renewal">Renewal</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="text-[10px] text-slate-500 block mb-1.5 uppercase font-semibold tracking-wider">Layanan PT</label>
+                                <select id="filter-pt" class="w-full p-2.5 bg-[#020617] text-white text-xs rounded-xl border border-slate-700 outline-none focus:border-sky-500">
+                                    <option value="all">Semua</option>
+                                    <option value="yes">Pakai PT</option>
+                                    <option value="no">Tidak Pakai PT</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="text-[10px] text-slate-500 block mb-1.5 uppercase font-semibold tracking-wider">Sign TNC</label>
+                                <select id="filter-tnc" class="w-full p-2.5 bg-[#020617] text-white text-xs rounded-xl border border-slate-700 outline-none focus:border-sky-500">
+                                    <option value="all">Semua</option>
+                                    <option value="yes">Done TNC</option>
+                                    <option value="no">Belum TNC</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="text-[10px] text-slate-500 block mb-1.5 uppercase font-semibold tracking-wider">Paket (Bulan)</label>
+                                <select id="filter-duration" class="w-full p-2.5 bg-[#020617] text-white text-xs rounded-xl border border-slate-700 outline-none focus:border-sky-500">
+                                    <option value="all">Semua Paket</option>
+                                    <option value="1">1 Bulan</option>
+                                    <option value="3">3 Bulan</option>
+                                    <option value="6">6 Bulan</option>
+                                    <option value="12">12 Bulan</option>
+                                    <option value="custom">Kustom</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="text-[10px] text-slate-500 block mb-1.5 uppercase font-semibold tracking-wider">Sumber Leads</label>
+                                <select id="filter-source" class="w-full p-2.5 bg-[#020617] text-white text-xs rounded-xl border border-slate-700 outline-none focus:border-sky-500">
+                                    <option value="all">Semua Leads</option>
+                                    <option value="Leads Internal">Leads Internal</option>
+                                    <option value="TikTok">TikTok</option>
+                                    <option value="IG">IG</option>
+                                    <option value="FB">FB</option>
+                                    <option value="Threads">Threads</option>
+                                    <option value="BR">BR</option>
+                                    <option value="WI">WI</option>
+                                    <option value="WhatsApp">WhatsApp</option>
+                                    <option value="Leads Pribadi">Leads Pribadi</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="flex justify-end gap-3 border-t border-slate-800/80 pt-4">
+                            <button onclick="resetFilters()" class="px-4 py-2 bg-slate-800 text-slate-300 text-xs font-bold rounded-lg hover:bg-slate-700 transition-all uppercase tracking-widest">Reset</button>
+                            <button onclick="applyFilters()" class="px-6 py-2 bg-sky-500 text-slate-950 text-xs font-bold rounded-lg hover:bg-sky-400 transition-all shadow-lg shadow-sky-500/20 uppercase tracking-widest">Terapkan Filter</button>
+                        </div>
+                    </div>
+                    
+                    <div id="birthday-announcement" class="hidden mb-6 p-4 bg-fuchsia-500/10 text-fuchsia-300 rounded-xl text-sm font-semibold flex items-center gap-3 border border-fuchsia-500/20">
+                        <span class="text-xl">🎂</span> Ada member yang berulang tahun hari ini!
+                    </div>
+
+                    <div id="active-filter-indicator" class="hidden mb-4 text-xs font-bold text-sky-400 flex items-center gap-2">
+                        <span class="relative flex h-2 w-2"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-sky-500"></span></span>
+                        Filter Spesifik Sedang Aktif
+                    </div>
+
+                    <!-- Tempat Render List View Profesional -->
+                    <div id="member-container" class="flex flex-col gap-3 min-h-[300px]">
+                        <!-- Diisi oleh JS -->
+                    </div>
+
+                </section>
+
+                <!-- TAB TAMBAH / EDIT MEMBER -->
+                <section id="tab-add" class="tab-content">
+                    <div class="bg-[#0f172a] p-6 md:p-8 rounded-2xl border border-slate-800/80 max-w-3xl mx-auto">
+                        <h2 id="form-title" class="text-xl font-bold text-white mb-8 tracking-tight border-b border-slate-800 pb-4">
+                            Tambah Member Baru
+                        </h2>
+                        <form id="member-form" class="space-y-6">
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-5 text-sm">
+                                <div>
+                                    <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 block">Nama Lengkap</label>
+                                    <input type="text" id="name" class="w-full p-3 bg-[#020617] text-white rounded-xl border border-slate-800 focus:border-sky-500 outline-none" required>
+                                </div>
+                                <div>
+                                    <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 block">No. WhatsApp</label>
+                                    <input type="tel" id="whatsapp" class="w-full p-3 bg-[#020617] text-white rounded-xl border border-slate-800 focus:border-sky-500 outline-none" oninput="this.value = this.value.replace(/[^0-9]/g, '')" required>
+                                </div>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-5 text-sm">
+                                <div>
+                                    <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 block">Tanggal Lahir (DD/MM/YYYY)</label>
+                                    <input type="text" id="dob" placeholder="15/05/1990" class="w-full p-3 bg-[#020617] text-slate-300 rounded-xl border border-slate-800 focus:border-sky-500 outline-none" oninput="formatDateInput(this)" maxlength="10">
+                                </div>
+                                <div>
+                                    <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 block">Tgl Transaksi (DD/MM/YYYY)</label>
+                                    <input type="text" id="transaction_date" placeholder="15/05/2026" class="w-full p-3 bg-[#020617] text-slate-300 rounded-xl border border-slate-800 focus:border-sky-500 outline-none" oninput="formatDateInput(this)" maxlength="10" required>
+                                </div>
+                                <div>
+                                    <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 block">Tgl Start Member (DD/MM/YYYY)</label>
+                                    <input type="text" id="start_date" placeholder="15/05/2026" class="w-full p-3 bg-[#020617] text-slate-300 rounded-xl border border-slate-800 focus:border-sky-500 outline-none" oninput="formatDateInput(this)" maxlength="10" required>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-5 text-sm">
+                                <div>
+                                    <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 block">Tipe Transaksi</label>
+                                    <select id="transaction_type" class="w-full p-3 bg-[#020617] text-white rounded-xl border border-slate-800 focus:border-sky-500 outline-none" required>
+                                        <option value="NJM">NJM</option>
+                                        <option value="Renewal">Renewal</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 block">Paket (Bulan)</label>
+                                    <div class="flex gap-2">
+                                        <select id="duration" class="flex-1 p-3 bg-[#020617] text-white rounded-xl border border-slate-800 focus:border-sky-500 outline-none" onchange="toggleCustomDuration()">
+                                            <option value="1">1 Bulan</option>
+                                            <option value="3">3 Bulan</option>
+                                            <option value="6">6 Bulan</option>
+                                            <option value="12">12 Bulan</option>
+                                            <option value="custom">Kustom...</option>
+                                        </select>
+                                        <input type="number" id="custom_duration" min="1" placeholder="Bln" class="hidden w-20 p-3 bg-[#020617] text-white rounded-xl border border-slate-800 focus:border-sky-500 outline-none">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 block">Sumber Leads</label>
+                                    <select id="source" class="w-full p-3 bg-[#020617] text-white rounded-xl border border-slate-800 focus:border-sky-500 outline-none" required>
+                                        <option value="Leads Internal">Leads Internal</option>
+                                        <option value="TikTok">TikTok</option>
+                                        <option value="IG">IG</option>
+                                        <option value="FB">FB</option>
+                                        <option value="Threads">Threads</option>
+                                        <option value="BR">BR</option>
+                                        <option value="WI">WI</option>
+                                        <option value="WhatsApp">WhatsApp</option>
+                                        <option value="Leads Pribadi">Leads Pribadi</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-5 text-sm">
+                                <div>
+                                    <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 block">Rev Membership (Rp)</label>
+                                    <input type="number" id="revenue_membership" class="w-full p-3 bg-[#020617] text-white rounded-xl border border-slate-800 focus:border-sky-500 outline-none">
+                                </div>
+                                <div>
+                                    <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 block">Rev Sesi PT (Rp)</label>
+                                    <input type="number" id="revenue_pos" class="w-full p-3 bg-[#020617] text-white rounded-xl border border-slate-800 focus:border-sky-500 outline-none">
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                                <label class="flex items-center gap-3 cursor-pointer p-4 bg-[#020617] rounded-xl border border-slate-800 hover:bg-slate-900 transition-colors">
+                                    <input type="checkbox" id="use_pt" class="w-5 h-5 rounded-md border-none ring-1 ring-slate-700 checked:bg-sky-500 appearance-none cursor-pointer">
+                                    <div class="flex flex-col">
+                                        <span class="text-sm font-bold text-slate-200">Layanan PT</span>
+                                    </div>
+                                </label>
+
+                                <label class="flex items-center gap-3 cursor-pointer p-4 bg-[#020617] rounded-xl border border-slate-800 hover:bg-slate-900 transition-colors">
+                                    <input type="checkbox" id="tnc_signed" class="w-5 h-5 rounded-md border-none ring-1 ring-slate-700 checked:bg-emerald-500 appearance-none cursor-pointer">
+                                    <div class="flex flex-col">
+                                        <span class="text-sm font-bold text-slate-200">Done Sign TNC</span>
+                                    </div>
+                                </label>
+                            </div>
+
+                            <div class="flex gap-3 pt-6 border-t border-slate-800">
+                                <button type="button" id="btn-cancel-edit" onclick="cancelEditMode()" class="hidden w-1/3 bg-slate-800 hover:bg-slate-700 text-white py-3.5 rounded-xl font-bold text-xs uppercase tracking-widest transition-all">
+                                    Batal
+                                </button>
+                                <button type="submit" id="btn-submit" class="flex-1 w-full bg-sky-500 hover:bg-sky-400 text-slate-950 py-3.5 rounded-xl font-bold text-xs uppercase tracking-widest transition-all disabled:opacity-50">
+                                    Simpan Member
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </section>
+
+                <!-- TAB LAPORAN & STATISTIK -->
+                <section id="tab-data" class="tab-content">
+                    <div class="space-y-6 max-w-5xl mx-auto">
+                        <h2 class="text-2xl font-extrabold text-white tracking-tight">Laporan Keuangan & Leads</h2>
+                        
+                        <div class="bg-[#0f172a] p-5 md:p-6 rounded-2xl border border-slate-800/80">
+                            <div class="flex flex-col md:flex-row gap-4 items-end">
+                                <div class="w-full md:w-48">
+                                    <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 block">Periode</label>
+                                    <select id="report-type" onchange="onReportTypeChange()" class="w-full p-3 bg-[#020617] text-white rounded-xl border border-slate-800 text-sm font-semibold outline-none focus:border-sky-500">
+                                        <option value="today" selected>Hari Ini</option>
+                                        <option value="this_week">Minggu Ini</option>
+                                        <option value="month">Bulan Tertentu</option>
+                                        <option value="custom">Rentang Tanggal</option>
+                                    </select>
+                                </div>
+                                
+                                <div id="report-input-wrapper" class="w-full md:flex-1">
+                                    <div id="input-month" class="hidden">
+                                        <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 block">Pilih Bulan (MM/YYYY)</label>
+                                        <input type="text" id="report-month" placeholder="05/2026" maxlength="7" class="w-full p-3 bg-[#020617] text-slate-300 rounded-xl border border-slate-800 text-sm outline-none focus:border-sky-500" oninput="formatMonthInput(this)">
+                                    </div>
+                                    <div id="input-custom" class="hidden flex-col md:flex-row gap-3">
+                                        <div class="flex-1">
+                                            <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 block">Dari (DD/MM/YYYY)</label>
+                                            <input type="text" id="report-start" placeholder="15/05/2026" class="w-full p-3 bg-[#020617] text-slate-300 rounded-xl border border-slate-800 text-sm outline-none focus:border-sky-500" oninput="formatDateInput(this)" maxlength="10">
+                                        </div>
+                                        <div class="flex-1">
+                                            <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 block">Sampai (DD/MM/YYYY)</label>
+                                            <input type="text" id="report-end" placeholder="15/05/2026" class="w-full p-3 bg-[#020617] text-slate-300 rounded-xl border border-slate-800 text-sm outline-none focus:border-sky-500" oninput="formatDateInput(this)" maxlength="10">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <button onclick="processReport()" class="w-full md:w-auto px-6 bg-sky-500 hover:bg-sky-400 text-slate-950 py-3 rounded-xl font-bold flex items-center justify-center gap-2 transition-all shadow-lg shadow-sky-500/20">
+                                    Proses
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-2">
+                            <div class="col-span-1 md:col-span-2 lg:col-span-4 flex items-center justify-between pb-2 border-b border-slate-800/80 mb-2">
+                                <span id="report-label" class="text-sm font-bold text-sky-400 uppercase tracking-widest">Laporan: Hari Ini</span>
+                                <span class="text-sm text-slate-400"><span id="report-member-count" class="font-bold text-white text-lg">0</span> Transaksi</span>
+                            </div>
+
+                            <div class="stat-card border-t-2 border-t-sky-500 border-x-0 border-b-0 rounded-xl">
+                                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Rev Membership</p>
+                                <h3 id="report-membership-rev" class="text-xl font-black text-white">Rp 0</h3>
+                            </div>
+
+                            <div class="stat-card border-t-2 border-t-purple-500 border-x-0 border-b-0 rounded-xl">
+                                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Rev POS (Sesi PT)</p>
+                                <h3 id="report-pos-rev" class="text-xl font-black text-white">Rp 0</h3>
+                            </div>
+
+                            <div class="stat-card border-t-2 border-t-emerald-500 border-x-0 border-b-0 bg-emerald-950/10 rounded-xl lg:col-span-2">
+                                <p class="text-[10px] font-bold text-emerald-500 uppercase tracking-wider mb-2">Total Pendapatan Bersih</p>
+                                <h3 id="report-total-rev" class="text-2xl font-black text-emerald-400">Rp 0</h3>
+                            </div>
+
+                            <div class="stat-card border-t-2 border-t-amber-500 border-x-0 border-b-0 bg-amber-950/10 rounded-xl lg:col-span-4">
+                                <div class="flex justify-between items-start">
+                                    <p class="text-[10px] font-bold text-amber-500 uppercase tracking-wider mb-2">Estimasi Komisi Bersih (<span id="report-commission-pct">0%</span>)</p>
+                                    <span class="text-xl">🏆</span>
+                                </div>
+                                <h3 id="report-commission-net" class="text-3xl font-black text-amber-400 mb-1">Rp 0</h3>
+                                <div class="flex flex-wrap items-center gap-2 text-[10px] text-amber-500/80 font-semibold mb-2">
+                                    <span>Gross: <span id="report-commission-gross">Rp 0</span></span>
+                                    <span>•</span>
+                                    <span>Pajak (2.5%): <span id="report-commission-tax" class="text-rose-400">-Rp 0</span></span>
+                                </div>
+                                <p class="text-[9px] text-amber-500/60 leading-snug">Dihitung dari total pendapatan yang sudah TTD TNC, setelah dipotong pajak 2.5%.</p>
+                            </div>
+                        </div>
+
+                        <div class="bg-[#0f172a] p-6 rounded-3xl border border-slate-800/80 mt-2">
+                            <h3 class="text-xs font-bold text-slate-400 mb-4 uppercase tracking-widest border-b border-slate-800 pb-3">Daftar Transaksi Member (Berdasarkan Periode)</h3>
+                            <div id="report-member-list" class="space-y-3 max-h-[350px] overflow-y-auto pr-2">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <!-- Breakdown Leads -->
+                            <div class="bg-[#0f172a] p-6 rounded-2xl border border-slate-800/80">
+                                <h3 class="text-xs font-bold text-slate-400 mb-5 uppercase tracking-widest border-b border-slate-800 pb-3">Breakdown Sumber Leads</h3>
+                                <div id="leads-breakdown-container" class="space-y-3">
+                                </div>
+                            </div>
+
+                            <!-- Ekspor & Cadangan -->
+                            <div class="bg-[#0f172a] p-6 rounded-2xl border border-slate-800/80 flex flex-col justify-between">
+                                <div>
+                                    <h3 class="text-xs font-bold text-slate-400 mb-5 uppercase tracking-widest border-b border-slate-800 pb-3">Penyimpanan & Cadangan</h3>
+                                    <div class="space-y-3">
+                                        <button onclick="exportCSV()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white p-3 rounded-xl font-bold flex items-center justify-center gap-2 text-sm transition-all shadow-md">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                                            Ekspor Excel (CSV)
+                                        </button>
+                                        <div class="grid grid-cols-2 gap-3">
+                                            <button onclick="exportBackup()" class="w-full bg-sky-600 hover:bg-sky-500 text-white p-3 rounded-xl font-bold flex items-center justify-center gap-2 transition-all shadow-md text-sm">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" /></svg>
+                                                Simpan JSON
+                                            </button>
+                                            <button onclick="triggerImport()" class="w-full bg-slate-800 hover:bg-slate-700 text-white p-3 rounded-xl font-bold flex items-center justify-center gap-2 transition-all shadow-md text-sm">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
+                                                Impor JSON
+                                            </button>
+                                        </div>
+                                        <input type="file" id="import-file" class="hidden" accept=".json" onchange="handleImport(event)">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
 
             </div>
-        </div>
+        </main>
+    </div>
 
-        <!-- 4. STRUK PEMBAYARAN -->
-        <div class="bg-slate-900 relative overflow-hidden">
-            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-500 via-indigo-500 to-emerald-500 opacity-50"></div>
-            <svg class="absolute -right-10 -bottom-10 text-slate-800/50 w-64 h-64 transform rotate-12" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 17V7"/></svg>
-            
-            <div class="relative z-10 p-6 sm:p-8">
-                <div id="btnReceipt" class="flex justify-between items-center cursor-pointer group">
-                    <h2 class="text-emerald-400 text-xs font-bold uppercase tracking-widest flex items-center"><span class="mr-2">🧾</span> Total Pembayaran</h2>
-                    <span id="arrowReceipt" class="text-slate-500 group-hover:text-emerald-400 transition-colors text-xs">▲</span>
-                </div>
+    <!-- Navigasi Bawah (Mobile) -->
+    <nav class="md:hidden fixed bottom-0 left-0 right-0 glass-nav border-t border-slate-800/80 flex justify-around p-3 z-50 rounded-t-3xl shadow-2xl">
+        <button onclick="switchTab('list')" id="nav-list" class="flex flex-col items-center text-sky-400 transition-all">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16" /></svg>
+            <span class="text-[9px] font-bold mt-1 uppercase">Database</span>
+        </button>
+        <button onclick="switchTab('add')" id="nav-add" class="flex flex-col items-center text-slate-500 transition-all">
+            <div class="bg-slate-900 border border-slate-800 p-2.5 rounded-full -mt-6 shadow-xl text-slate-400 transition-all" id="add-icon-bg">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
+            </div>
+            <span class="text-[9px] font-bold mt-1 uppercase" id="nav-add-label">Baru</span>
+        </button>
+        <button onclick="switchTab('data')" id="nav-data" class="flex flex-col items-center text-slate-500 transition-all">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012-2h2a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
+            <span class="text-[9px] font-bold mt-1 uppercase">Laporan</span>
+        </button>
+    </nav>
 
-                <div id="boxReceiptDetails" class="space-y-5 mt-6 animate-in"></div>
-
-                <div id="borderReceipt" class="mt-6 pt-6 border-t border-slate-700/80">
-                    <div class="flex justify-between items-end">
-                        <div class="pb-1"><span class="text-slate-400 text-sm font-semibold block mb-1">TOTAL AKHIR</span></div>
-                        <div class="text-right">
-                            <span id="grandTotalText" class="text-4xl sm:text-5xl font-extrabold text-white tracking-tight drop-shadow-md block">Rp 0</span>
-                            <span id="grandTotalPerMonthText" class="text-sm text-emerald-400 mt-2 block font-medium"></span>
-                        </div>
-                    </div>
-                </div>
+    <!-- Modal Dialog Kustom -->
+    <div id="custom-modal" class="fixed inset-0 bg-slate-950/80 z-50 flex items-center justify-center p-4 hidden backdrop-blur-sm">
+        <div class="bg-[#0f172a] rounded-2xl p-6 max-w-sm w-full shadow-2xl border border-slate-800 transform transition-all scale-95 duration-200 text-slate-100">
+            <h3 id="modal-title" class="text-lg font-bold text-white mb-2"></h3>
+            <p id="modal-message" class="text-sm text-slate-400 mb-6"></p>
+            <div class="flex gap-3 justify-end">
+                <button id="modal-cancel-btn" class="px-4 py-2.5 rounded-xl border border-slate-800 bg-[#020617] text-slate-300 text-xs font-bold hidden active:scale-95 transition-all"></button>
+                <button id="modal-confirm-btn" class="px-5 py-2.5 rounded-xl bg-sky-500 text-slate-950 text-xs font-bold active:scale-95 transition-all"></button>
             </div>
         </div>
     </div>
 
-    <!-- 5. REVENUE INTERNAL -->
-    <div class="w-full max-w-2xl mt-6 pb-12">
-        <button id="btnRevenue" class="flex items-center justify-between w-full p-4 bg-slate-200/60 hover:bg-slate-200 text-slate-600 rounded-2xl font-semibold text-sm outline-none transition-colors group border border-slate-300/50">
-            <div class="flex items-center space-x-3">
-                <svg class="text-slate-400 group-hover:text-slate-600" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><line x1="3" x2="21" y1="9" y2="9"/><line x1="9" x2="9" y1="21" y2="9"/></svg>
-                <span>Rincian Revenue Diterima (Khusus Internal)</span>
-            </div>
-            <span id="arrowRevenue" class="text-xs text-slate-400 group-hover:text-slate-600">▼</span>
-        </button>
-        <div id="boxRevenue" class="hidden mt-4 p-6 bg-white border border-slate-200 rounded-2xl premium-shadow space-y-5"></div>
+    <!-- Notifikasi Cepat -->
+    <div id="toast-notif" class="fixed top-6 right-6 bg-emerald-500 text-slate-950 px-5 py-3 rounded-xl shadow-2xl font-bold text-sm transform transition-all duration-300 translate-x-[150%] z-50 flex items-center gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+        <span id="toast-message">Tersimpan!</span>
     </div>
 
     <script>
-        // DATA MASTER (Dengan Tambahan 12 Bulan All Club Baru)
-        const membershipPackages = [
-          { id: 'o1', group: 'One Club', name: '1 Bulan', total: 616000, rev: 560000, pb1: 56000, days: 30, minPT: 0 },
-          { id: 'o2', group: 'One Club', name: '3 Bulan', total: 1056000, rev: 960000, pb1: 96000, days: 90, minPT: 0 },
-          { id: 'o3', group: 'One Club', name: '3 Bulan', total: 1155000, rev: 1050000, pb1: 105000, days: 90, minPT: 0 },
-          { id: 'o4', group: 'One Club', name: '6 Bulan', total: 1848000, rev: 1680000, pb1: 168000, days: 180, minPT: 0 },
-          { id: 'o5', group: 'One Club', name: '6 Bulan', total: 1980000, rev: 1800000, pb1: 180000, days: 180, minPT: 0 },
-          
-          { id: 'a1', group: 'All Club', name: '3 Bulan', total: 1419000, rev: 1290000, pb1: 129000, days: 90, minPT: 0 },
-          { id: 'a2', group: 'All Club', name: '6 Bulan', total: 2112000, rev: 1920000, pb1: 192000, days: 180, minPT: 0 },
-          { id: 'a3', group: 'All Club', name: '12 Bulan', total: 2838000, rev: 2580000, pb1: 258000, days: 360, minPT: 0 },
-          { id: 'a3_new', group: 'All Club', name: '12 Bulan', total: 3531000, rev: 3210000, pb1: 321000, days: 360, minPT: 0 }, // Tambahan Baru
-          { id: 'a4', group: 'All Club', name: '12+2 Bulan', total: 3619000, rev: 3290000, pb1: 329000, days: 420, minPT: 0 },
+        // =========================================================================================
+        // APLIKASI VERSI LOKAL V4.1 (DATE FORMAT DD/MM/YYYY INPUT & OUTPUT, FIX TNC)
+        // =========================================================================================
 
-          { id: 'b1', group: 'Bundling (With PT)', name: '3 Bulan', total: 660000, rev: 600000, pb1: 60000, days: 90, minPT: 24 },
-          { id: 'b2', group: 'Bundling (With PT)', name: '6 Bulan', total: 1320000, rev: 1200000, pb1: 120000, days: 180, minPT: 24 },
-          { id: 'b3', group: 'Bundling (With PT)', name: '12 Bulan', total: 2750000, rev: 2500000, pb1: 250000, days: 360, minPT: 3 },
-          { id: 'b4', group: 'Bundling (With PT)', name: '12 Bulan', total: 2640000, rev: 2400000, pb1: 240000, days: 360, minPT: 16 },
-        ];
+        let members = JSON.parse(localStorage.getItem('jan_willfitness_v3')) || [];
+        let editingMemberId = null;
+        let sortOrder = 'desc'; 
+        let expandedCards = {};
+        
+        let currentFilters = {
+            status: 'all', pt: 'all', tnc: 'all', duration: 'all', source: 'all', type: 'all'
+        };
 
-        const ptPackages = [
-          { id: 'p1', name: '3 Sesi', total: 693000, rev: 630000, pb1: 63000, sessions: 3, validity: 19 },
-          { id: 'p2', name: '3 Sesi', total: 990000, rev: 900000, pb1: 90000, sessions: 3, validity: 19 },
-          { id: 'p3', name: '6 Sesi', total: 1386000, rev: 1260000, pb1: 126000, sessions: 6, validity: 30 },
-          { id: 'p4', name: '6 Sesi', total: 1980000, rev: 1800000, pb1: 180000, sessions: 6, validity: 30 },
-          { id: 'p5', name: '8 Sesi', total: 1936000, rev: 1760000, pb1: 176000, sessions: 8, validity: 34 },
-          { id: 'p6', name: '12 Sesi', total: 2772000, rev: 2520000, pb1: 252000, sessions: 12, validity: 52 },
-          { id: 'p7', name: '15 Sesi', total: 3465000, rev: 3150000, pb1: 315000, sessions: 15, validity: 65 },
-          { id: 'p8', name: '16 Sesi', total: 3784000, rev: 3440000, pb1: 344000, sessions: 16, validity: 70 },
-          { id: 'p9', name: '16 Sesi', total: 3872000, rev: 3520000, pb1: 352000, sessions: 16, validity: 70 },
-          { id: 'p10', name: '24 Sesi', total: 4752000, rev: 4320000, pb1: 432000, sessions: 24, validity: 99 },
-          { id: 'p11', name: '24 Sesi', total: 5720000, rev: 5200000, pb1: 520000, sessions: 24, validity: 99 },
-          { id: 'p12', name: '32 Sesi', total: 5456000, rev: 4960000, pb1: 496000, sessions: 32, validity: 130 },
-          { id: 'p13', name: '32 Sesi', total: 7568000, rev: 6880000, pb1: 688000, sessions: 32, validity: 130 },
-          { id: 'p14', name: '32 Sesi', total: 7744000, rev: 7040000, pb1: 704000, sessions: 32, validity: 130 },
-          { id: 'p15', name: '70 Sesi', total: 11935000, rev: 10850000, pb1: 1085000, sessions: 70, validity: 290 },
-          { id: 'p16', name: '70 Sesi', total: 12298000, rev: 11180000, pb1: 1118000, sessions: 70, validity: 290 },
-          { id: 'p17', name: '100 Sesi', total: 17050000, rev: 15500000, pb1: 1550000, sessions: 100, validity: 410 },
-        ];
+        // --- PENGELOLAAN FORMAT TANGGAL ---
 
-        // VARIABEL STATE
-        let showDiscount = false;
-        let showRevenue = false;
-        let showReceiptDetails = true;
-        let rawDiscountValue = 0;
+        // Mengubah string date ISO (YYYY-MM-DD) menjadi DD/MM/YYYY untuk ditampilkan atau diisi ke input
+        function formatDateToDMY(isoDateStr) {
+            if (!isoDateStr) return '';
+            const parts = isoDateStr.split('-');
+            if (parts.length === 3) return `${parts[2]}/${parts[1]}/${parts[0]}`;
+            return isoDateStr;
+        }
 
-        const el = {
-            checkMem: document.getElementById('checkMember'),
-            boxMem: document.getElementById('boxMember'),
-            selMem: document.getElementById('selectMember'),
-            infoMemMo: document.getElementById('infoMemberPerMonth'),
-            infoMemDays: document.getElementById('infoMemberDays'),
+        // Mengubah input DD/MM/YYYY menjadi ISO YYYY-MM-DD untuk disimpan di background
+        function parseDMYToISO(dmyStr) {
+            if (!dmyStr) return '';
+            const parts = dmyStr.split('/');
+            if (parts.length === 3 && parts[2].length === 4) {
+                return `${parts[2]}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}`;
+            }
+            return ''; // Kembalikan string kosong jika tidak valid
+        }
+
+        // Auto format saat user mengetik di input field (DD/MM/YYYY)
+        window.formatDateInput = function(input) {
+            let val = input.value.replace(/\D/g, ''); // Hapus semua karakter non-digit
+            if (val.length > 2) val = val.slice(0, 2) + '/' + val.slice(2);
+            if (val.length > 5) val = val.slice(0, 5) + '/' + val.slice(5, 9);
+            input.value = val;
+        }
+
+        // Auto format untuk input Bulan di Laporan (MM/YYYY)
+        window.formatMonthInput = function(input) {
+            let val = input.value.replace(/\D/g, '');
+            if (val.length > 2) val = val.slice(0, 2) + '/' + val.slice(2, 6);
+            input.value = val;
+        }
+
+        function sanitizeDate(dateStr) {
+            if (!dateStr) return '';
+            if (dateStr.match(/^\d{4}-\d{2}-\d{2}$/)) return dateStr;
+            
+            const months = {
+                'januari': '01', 'jan': '01', 'january': '01',
+                'februari': '02', 'feb': '02', 'february': '02',
+                'maret': '03', 'mar': '03', 'march': '03',
+                'april': '04', 'apr': '04',
+                'mei': '05', 'may': '05',
+                'juni': '06', 'jun': '06', 'june': '06',
+                'juli': '07', 'jul': '07', 'july': '07',
+                'agustus': '08', 'agu': '08', 'aug': '08', 'august': '08',
+                'september': '09', 'sep': '09',
+                'oktober': '10', 'okt': '10', 'october': '10', 'oct': '10',
+                'november': '11', 'nov': '11',
+                'desember': '12', 'des': '12', 'december': '12', 'dec': '12'
+            };
+            
+            const parts = dateStr.toLowerCase().replace(/,/g, '').split(' ');
+            if (parts.length >= 3) {
+                let d = parts[0].padStart(2, '0');
+                let m = months[parts[1]] || '01';
+                let y = parts[2];
+                return `${y}-${m}-${d}`;
+            }
+            return new Date().toISOString().split('T')[0];
+        }
+
+        window.toggleFullscreen = function() {
+            if (!document.fullscreenElement) {
+                if (document.documentElement.requestFullscreen) {
+                    document.documentElement.requestFullscreen().catch((err) => console.log(err));
+                }
+            } else {
+                if (document.exitFullscreen) document.exitFullscreen();
+            }
+        };
+
+        const initUI = () => {
+            let dataChanged = false;
+            members.forEach(m => {
+                const oldTx = m.transactionDate;
+                const oldSt = m.startDate;
+                m.transactionDate = sanitizeDate(m.transactionDate);
+                m.startDate = sanitizeDate(m.startDate);
+                if(m.transactionDate === '') m.transactionDate = m.startDate;
+                if(m.startDate === '') m.startDate = m.transactionDate;
+                if(!m.transactionType) m.transactionType = 'NJM'; 
+                
+                if(oldTx !== m.transactionDate || oldSt !== m.startDate) dataChanged = true;
+            });
+            if(dataChanged) saveDataLocal();
+
+            // Set Form Add dengan nilai Default (Hari Ini dalam DD/MM/YYYY)
+            const today = new Date();
+            const todayDMY = String(today.getDate()).padStart(2, '0') + '/' + String(today.getMonth() + 1).padStart(2, '0') + '/' + today.getFullYear();
+            
+            document.getElementById('start_date').value = todayDMY;
+            document.getElementById('transaction_date').value = todayDMY;
+            
+            // Set input bulan Laporan ke (MM/YYYY)
+            const currentMonthStr = String(today.getMonth() + 1).padStart(2, '0') + '/' + today.getFullYear();
+            document.getElementById('report-month').value = currentMonthStr;
+
+            applyDefaultSortDirection();
+            window.onReportTypeChange();
+            window.renderMembers();
+            window.processReport();
+        };
+
+        window.showCustomAlert = function(message, title = "Informasi") {
+            return new Promise((resolve) => {
+                const modal = document.getElementById('custom-modal');
+                document.getElementById('modal-title').innerText = title;
+                document.getElementById('modal-message').innerText = message;
+                const cancelBtn = document.getElementById('modal-cancel-btn');
+                cancelBtn.classList.add('hidden');
+                const confirmBtn = document.getElementById('modal-confirm-btn');
+                confirmBtn.innerText = "Selesai";
+                confirmBtn.className = "px-5 py-2.5 rounded-xl bg-sky-500 text-slate-950 text-xs font-bold active:scale-95 transition-all";
+                confirmBtn.onclick = () => { modal.classList.add('hidden'); resolve(true); };
+                modal.classList.remove('hidden');
+            });
+        }
+
+        window.showCustomConfirm = function(message, title = "Konfirmasi") {
+            return new Promise((resolve) => {
+                const modal = document.getElementById('custom-modal');
+                document.getElementById('modal-title').innerText = title;
+                document.getElementById('modal-message').innerText = message;
+                const cancelBtn = document.getElementById('modal-cancel-btn');
+                cancelBtn.innerText = "Batal";
+                cancelBtn.classList.remove('hidden');
+                cancelBtn.onclick = () => { modal.classList.add('hidden'); resolve(false); };
+                const confirmBtn = document.getElementById('modal-confirm-btn');
+                confirmBtn.innerText = "Hapus";
+                confirmBtn.className = "px-5 py-2.5 rounded-xl bg-rose-600 text-white text-xs font-bold active:scale-95 transition-all";
+                confirmBtn.onclick = () => { modal.classList.add('hidden'); resolve(true); };
+                modal.classList.remove('hidden');
+            });
+        }
 
         function showToast(message) {
             const toast = document.getElementById('toast-notif');
@@ -240,9 +678,9 @@
             const parts = dateStr.split('-');
             if (parts.length !== 3) return dateStr;
             const year = parts[0];
-            const month = parts[1].padStart(2, '0');
-            const day = parts[2].padStart(2, '0');
-            return `${day}/${month}/${year}`;
+            const monthIdx = parseInt(parts[1], 10) - 1;
+            const day = parts[2];
+            return `${day}/${String(monthIdx + 1).padStart(2, '0')}/${year}`;
         }
 
         function formatDisplayTimestamp(timestamp) {
@@ -259,244 +697,813 @@
             return 'Rp ' + parseInt(num, 10).toLocaleString('id-ID');
         }
 
-        // BIKIN OPSI MEMBERSHIP
-        function initMembershipOptions() {
-            el.selMem.innerHTML = '';
-            const groups = [...new Set(membershipPackages.map(p => p.group))];
-            groups.forEach(g => {
-                const optGroup = document.createElement('optgroup');
-                optGroup.label = g.toUpperCase();
-                membershipPackages.filter(p => p.group === g).forEach(p => {
-                    const opt = document.createElement('option');
-                    opt.value = p.id;
-                    opt.textContent = p.name;
-                    optGroup.appendChild(opt);
-                });
-                el.selMem.appendChild(optGroup);
-            });
+        function getInitials(name) {
+            if (!name) return 'M';
+            const parts = name.trim().split(' ');
+            if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase();
+            return name.substring(0, 2).toUpperCase();
         }
 
-        // BIKIN OPSI PT
-        function initPTOptions(selectElem, minSessions = 0, addNone = false) {
-            if (!selectElem) return;
-            const current = selectElem.value;
-            selectElem.innerHTML = '';
-            if (addNone) {
-                const optNone = document.createElement('option');
-                optNone.value = 'none';
-                optNone.textContent = '-- Kosong --';
-                selectElem.appendChild(optNone);
+        function getDaysUntilNextBirthday(dobString) {
+            if(!dobString) return 999;
+            const today = new Date();
+            today.setHours(0,0,0,0);
+            const dob = new Date(dobString);
+            if(isNaN(dob)) return 999;
+            let nextBday = new Date(today.getFullYear(), dob.getMonth(), dob.getDate());
+            if (nextBday < today) nextBday.setFullYear(today.getFullYear() + 1);
+            return Math.ceil((nextBday - today) / (1000 * 60 * 60 * 24));
+        }
+
+        function isBirthdayToday(dobString) {
+            if(!dobString) return false;
+            const today = new Date();
+            const dob = new Date(dobString);
+            if(isNaN(dob)) return false;
+            return today.getDate() === dob.getDate() && today.getMonth() === dob.getMonth();
+        }
+
+        function calculateExpiry(startDate, durationMonths) {
+            const date = new Date(startDate);
+            if(isNaN(date)) return new Date(); 
+            
+            let daysToAdd = 30;
+            if (durationMonths === 'custom' || isNaN(durationMonths)) {
+                const val = parseInt(durationMonths);
+                daysToAdd = isNaN(val) ? 30 : val * 30;
+            } else {
+                const m = parseInt(durationMonths);
+                switch(m) {
+                    case 1: daysToAdd = 30; break;
+                    case 3: daysToAdd = 90; break;
+                    case 6: daysToAdd = 180; break;
+                    case 12: daysToAdd = 360; break;
+                    default: daysToAdd = m * 30;
+                }
             }
-            const filtered = ptPackages.filter(p => p.sessions >= minSessions);
-            filtered.forEach(p => {
-                const opt = document.createElement('option');
-                opt.value = p.id;
-                opt.textContent = p.name;
-                selectElem.appendChild(opt);
-            });
-
-            if (selectElem.querySelector(`option[value="${current}"]`)) selectElem.value = current;
-            else if (!addNone && filtered.length > 0) selectElem.value = filtered[0].id;
+            date.setDate(date.getDate() + daysToAdd);
+            return date;
         }
 
-        // SETUP AWAL
-        initMembershipOptions();
-        initPTOptions(el.selPT1, 0, false);
-        initPTOptions(el.selPT2, 0, true);
-        initPTOptions(el.selPT3, 0, true);
+        function getDaysRemaining(expiryDate) {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const expiry = new Date(expiryDate);
+            expiry.setHours(0, 0, 0, 0);
+            return Math.ceil((expiry - today) / (1000 * 60 * 60 * 24));
+        }
 
-        // FUNGSI KALKULASI UTAMA (DILINDUNGI DARI ERROR)
-        function calcAll() {
-            try {
-                const isMem = el.checkMem.checked;
-                const actMem = membershipPackages.find(p => p.id === el.selMem.value) || membershipPackages[0];
-                const isBund = isMem && actMem.minPT > 0;
-
-                // Tampil/Sembunyi Membership
-                isMem ? el.boxMem.classList.remove('hidden') : el.boxMem.classList.add('hidden');
-
-                // Paksaan Bundling PT 1
-                if (isBund) {
-                    el.checkPT.checked = true;
-                    el.checkPT.disabled = true;
-                    el.lockIcon.classList.remove('hidden');
-                    el.warnBund.classList.remove('hidden');
-                    initPTOptions(el.selPT1, actMem.minPT, false);
+        // TABS
+        window.switchTab = function(tabId) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.getElementById('tab-' + tabId).classList.add('active');
+            
+            const tabs = ['list', 'add', 'data'];
+            tabs.forEach(t => {
+                const btn = document.getElementById('nav-' + t);
+                if(t === tabId) {
+                    btn.classList.add('text-sky-400'); btn.classList.remove('text-slate-500');
+                    if(t === 'add') {
+                        document.getElementById('add-icon-bg').classList.add('bg-sky-500', 'text-slate-950');
+                        document.getElementById('add-icon-bg').classList.remove('bg-slate-900', 'text-slate-400');
+                    }
                 } else {
-                    el.checkPT.disabled = false;
-                    el.lockIcon.classList.add('hidden');
-                    el.warnBund.classList.add('hidden');
-                    initPTOptions(el.selPT1, 0, false);
-                }
-
-                const isPT = el.checkPT.checked;
-                // Tampil/Sembunyi PT
-                isPT ? el.boxPT.classList.remove('hidden') : el.boxPT.classList.add('hidden');
-
-                let actPTs = [];
-                if (isPT) {
-                    const pt1 = ptPackages.find(p => p.id === el.selPT1.value);
-                    if (pt1) actPTs.push(pt1);
-                    const pt2 = ptPackages.find(p => p.id === el.selPT2.value);
-                    if (pt2 && el.selPT2.value !== 'none') actPTs.push(pt2);
-                    const pt3 = ptPackages.find(p => p.id === el.selPT3.value);
-                    if (pt3 && el.selPT3.value !== 'none') actPTs.push(pt3);
-                }
-
-                let pTotal = 0, pTotSess = 0, pTotVal = 0, pTotRev = 0, pTotPB1 = 0, ptGim = 0;
-                actPTs.forEach(pt => {
-                    pTotal += pt.total; pTotSess += pt.sessions; pTotVal += pt.validity; pTotRev += pt.rev; pTotPB1 += pt.pb1;
-                    const max = Math.max(...ptPackages.filter(p => p.name === pt.name).map(p => p.total));
-                    if (max > pt.total) ptGim += (max - pt.total);
-                });
-
-                // Pelindung assignment info element (Mencegah error Null)
-                if (isMem) {
-                    if(el.infoMemMo) el.infoMemMo.textContent = formatRp(actMem.total / (actMem.days / 30));
-                    if(el.infoMemDays) el.infoMemDays.textContent = actMem.days;
-                }
-                if (isPT && actPTs.length > 0) {
-                    let perSess = pTotSess > 0 ? (pTotal / pTotSess) : 0;
-                    if(el.infoPTSess) el.infoPTSess.textContent = formatRp(perSess);
-                    if(el.infoPTTotSess) el.infoPTTotSess.textContent = pTotSess;
-                }
-
-                // Gimmick
-                let memMax = actMem.total;
-                if (isMem) {
-                    const pkgs = membershipPackages.filter(p => p.name === actMem.name && p.group === actMem.group).map(p => p.total);
-                    if (pkgs.length > 0) memMax = Math.max(...pkgs);
-                }
-                const memGim = isMem && memMax > actMem.total ? memMax - actMem.total : 0;
-                const autoDisc = memGim + ptGim;
-
-                // Total
-                const mTot = isMem ? actMem.total : 0;
-                const sub = mTot + pTotal;
-                const grand = Math.max(0, sub - rawDiscountValue);
-
-                let effMo = 1;
-                if (isMem) effMo = actMem.days / 30;
-                else if (isPT && actPTs.length > 0) effMo = Math.max(1, Math.round(pTotVal / 30));
-                const gMo = grand > 0 ? grand / effMo : 0;
-
-                // Render Struk
-                el.boxRecDet.innerHTML = '';
-                if (showReceiptDetails) {
-                    if (isMem) {
-                        let gimHtml = memGim > 0 ? `<span class="text-slate-500 line-through text-[11px] mr-2">${formatRp(memMax)}</span>` : '';
-                        el.boxRecDet.innerHTML += `
-                            <div class="flex flex-col border-b border-slate-700/60 pb-4">
-                                <div class="flex justify-between items-start text-sm">
-                                    <div>
-                                        <span class="text-slate-300 font-semibold">• Membership: <span class="text-white">${actMem.name}</span></span>
-                                        <span class="block text-[11px] text-slate-500 mt-1 uppercase tracking-wider ml-3">Kategori: ${actMem.group}</span>
-                                    </div>
-                                    <div class="text-right flex items-center">${gimHtml}<span class="text-white font-bold text-base tracking-tight">${formatRp(actMem.total)}</span></div>
-                                </div>
-                            </div>`;
+                    btn.classList.remove('text-sky-400'); btn.classList.add('text-slate-500');
+                    if(t === 'add') {
+                        document.getElementById('add-icon-bg').classList.remove('bg-sky-500', 'text-slate-950');
+                        document.getElementById('add-icon-bg').classList.add('bg-slate-900', 'text-slate-400');
                     }
-                    if (isPT && actPTs.length > 0) {
-                        let ptDet = '';
-                        actPTs.forEach(pt => {
-                            const mP = Math.max(...ptPackages.filter(p => p.name === pt.name).map(p => p.total));
-                            const hG = mP > pt.total;
-                            let gH = hG ? `<span class="text-slate-500 line-through text-[11px] mr-2">${formatRp(mP)}</span>` : '';
-                            ptDet += `
-                                <div class="flex justify-between items-center text-sm py-1">
-                                    <span class="text-slate-400 font-medium">- ${pt.name}</span>
-                                    <div class="text-right flex items-center">${gH}<span class="text-white font-bold tracking-tight">${formatRp(pt.total)}</span></div>
-                                </div>`;
-                        });
-                        el.boxRecDet.innerHTML += `
-                            <div class="flex flex-col border-b border-slate-700/60 pb-4">
-                                <span class="text-slate-300 text-sm font-semibold mb-2">• Personal Trainer (Mix ${pTotSess} Sesi):</span>
-                                <div class="ml-3 space-y-1">${ptDet}</div>
-                                <span class="block text-[11px] text-slate-500 mt-2 uppercase tracking-wider ml-3">Total Masa Aktif: ${pTotVal} Hari</span>
-                            </div>`;
-                    }
-                    if (autoDisc > 0) {
-                        el.boxRecDet.innerHTML += `<div class="mt-4 p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold text-center uppercase tracking-wide">✨ Promo Spesial: Hemat ${formatRp(autoDisc)}</div>`;
-                    }
-                    if (rawDiscountValue > 0) {
-                        el.boxRecDet.innerHTML += `<div class="flex justify-between items-center text-sm text-emerald-400 font-bold mt-4 pt-2"><span>Potongan Manual</span><span>- ${formatRp(rawDiscountValue)}</span></div>`;
-                    }
-                    if (!isMem && !isPT) el.boxRecDet.innerHTML = '<div class="text-slate-500 text-sm italic text-center py-2">Pilih paket untuk melihat rincian.</div>';
                 }
-
-                if(el.textGrand) el.textGrand.textContent = formatRp(grand);
-                if(el.textGrandMo) el.textGrandMo.textContent = grand > 0 ? `(Hanya ${formatRp(gMo)} / bln)` : '';
-
-                // Render Revenue
-                el.boxRev.innerHTML = '';
-                if (isMem) {
-                    el.boxRev.innerHTML += `
-                        <div class="p-4 bg-slate-50 rounded-xl border border-slate-100">
-                            <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-3">Membership</p>
-                            <div class="flex justify-between text-sm text-slate-700 mb-1.5"><span>Rev. Diterima:</span><span class="font-bold text-slate-900">${formatRp(actMem.rev)}</span></div>
-                            <div class="flex justify-between text-sm text-slate-700"><span>PB1:</span><span class="font-bold text-slate-900">${formatRp(actMem.pb1)}</span></div>
-                        </div>`;
+                
+                const deskBtn = document.getElementById('desk-nav-' + t);
+                if(t === tabId) {
+                    deskBtn.classList.add('text-sky-400', 'bg-sky-500/10', 'border-sky-500/20');
+                    deskBtn.classList.remove('text-slate-400', 'hover:text-white', 'hover:bg-slate-800/50', 'border-transparent');
+                } else {
+                    deskBtn.classList.remove('text-sky-400', 'bg-sky-500/10', 'border-sky-500/20');
+                    deskBtn.classList.add('text-slate-400', 'hover:text-white', 'hover:bg-slate-800/50', 'border-transparent');
                 }
-                if (isPT && actPTs.length > 0) {
-                    el.boxRev.innerHTML += `
-                        <div class="p-4 bg-slate-50 rounded-xl border border-slate-100">
-                            <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-3">Personal Trainer</p>
-                            <div class="flex justify-between text-sm text-slate-700 mb-1.5"><span>Rev. Diterima:</span><span class="font-bold text-slate-900">${formatRp(pTotRev)}</span></div>
-                            <div class="flex justify-between text-sm text-slate-700"><span>PB1:</span><span class="font-bold text-slate-900">${formatRp(pTotPB1)}</span></div>
-                        </div>`;
-                }
-                const rTot = (isMem ? actMem.rev : 0) + (isPT ? pTotRev : 0);
-                const pTaxTot = (isMem ? actMem.pb1 : 0) + (isPT ? pTotPB1 : 0);
-                el.boxRev.innerHTML += `
-                    <div class="mt-4 pt-4 border-t border-slate-200">
-                        <div class="flex justify-between text-[15px] text-indigo-600 font-extrabold mb-1"><span>Total Target Revenue:</span><span>${formatRp(rTot)}</span></div>
-                        <div class="flex justify-between text-sm text-slate-500 font-semibold"><span>Total Target PB1:</span><span>${formatRp(pTaxTot)}</span></div>
-                    </div>`;
-                if (rawDiscountValue > 0) el.boxRev.innerHTML += `<p class="text-[11px] text-rose-500 mt-3 font-medium text-center bg-rose-50 p-2 rounded-lg">*Total penerimaan akan dikurangi diskon manual sebesar ${formatRp(rawDiscountValue)}.</p>`;
+            });
 
-            } catch (err) {
-                console.error("Terjadi kesalahan sistem:", err);
+            const titles = { 'list': 'Database Member', 'add': editingMemberId ? 'Edit Member' : 'Tambah Member', 'data': 'Laporan Penjualan' };
+            document.getElementById('desktop-page-title').innerText = titles[tabId];
+
+            if(tabId === 'list') window.renderMembers();
+        }
+
+        window.toggleCustomDuration = function() {
+            const selectVal = document.getElementById('duration').value;
+            const cd = document.getElementById('custom_duration');
+            if (selectVal === 'custom') {
+                cd.classList.remove('hidden'); cd.classList.add('block');
+            } else {
+                cd.classList.add('hidden'); cd.classList.remove('block');
             }
         }
 
-        // --- EVENT BINDING ---
-        el.checkMem.addEventListener('change', calcAll);
-        el.selMem.addEventListener('change', calcAll);
-        el.checkPT.addEventListener('change', calcAll);
-        el.selPT1.addEventListener('change', calcAll);
-        el.selPT2.addEventListener('change', calcAll);
-        el.selPT3.addEventListener('change', calcAll);
+        window.toggleCardExpand = function(id) {
+            expandedCards[id] = !expandedCards[id];
+            window.renderMembers();
+        }
 
-        el.btnDisc.addEventListener('click', () => {
-            showDiscount = !showDiscount;
-            showDiscount ? el.boxDisc.classList.remove('hidden') : el.boxDisc.classList.add('hidden');
-            el.arrDisc.textContent = showDiscount ? '▲' : '▼';
-            if (!showDiscount) { el.inpDisc.value = ''; rawDiscountValue = 0; calcAll(); }
-        });
+        // PANEL FILTER SPESIFIK
+        window.toggleFilterPanel = function() {
+            const panel = document.getElementById('filter-panel');
+            if (panel.classList.contains('hidden')) {
+                panel.classList.remove('hidden');
+                document.getElementById('filter-status').value = currentFilters.status;
+                document.getElementById('filter-type').value = currentFilters.type;
+                document.getElementById('filter-pt').value = currentFilters.pt;
+                document.getElementById('filter-tnc').value = currentFilters.tnc;
+                document.getElementById('filter-duration').value = currentFilters.duration;
+                document.getElementById('filter-source').value = currentFilters.source;
+            } else {
+                panel.classList.add('hidden');
+            }
+        }
 
-        el.inpDisc.addEventListener('input', (e) => {
-            const c = e.target.value.replace(/[^0-9]/g, '');
-            rawDiscountValue = c ? parseInt(c, 10) : 0;
-            if(isNaN(rawDiscountValue)) rawDiscountValue = 0;
-            e.target.value = c ? rawDiscountValue.toLocaleString('id-ID') : '';
-            calcAll();
-        });
+        window.applyFilters = function() {
+            currentFilters.status = document.getElementById('filter-status').value;
+            currentFilters.type = document.getElementById('filter-type').value;
+            currentFilters.pt = document.getElementById('filter-pt').value;
+            currentFilters.tnc = document.getElementById('filter-tnc').value;
+            currentFilters.duration = document.getElementById('filter-duration').value;
+            currentFilters.source = document.getElementById('filter-source').value;
+            window.toggleFilterPanel(); 
+            window.renderMembers();
+        }
 
-        el.btnRec.addEventListener('click', () => {
-            showReceiptDetails = !showReceiptDetails;
-            el.arrRec.textContent = showReceiptDetails ? '▲' : '▼';
-            showReceiptDetails ? el.boxRecDet.classList.remove('hidden') : el.boxRecDet.classList.add('hidden');
-            el.borderRec.className = showReceiptDetails ? "mt-6 pt-6 border-t border-slate-700/80" : "mt-6 pt-2";
-            calcAll();
-        });
+        window.resetFilters = function() {
+            currentFilters = { status: 'all', pt: 'all', tnc: 'all', duration: 'all', source: 'all', type: 'all' };
+            document.getElementById('filter-status').value = 'all';
+            document.getElementById('filter-type').value = 'all';
+            document.getElementById('filter-pt').value = 'all';
+            document.getElementById('filter-tnc').value = 'all';
+            document.getElementById('filter-duration').value = 'all';
+            document.getElementById('filter-source').value = 'all';
+            document.getElementById('search-input').value = '';
+            window.toggleFilterPanel(); 
+            window.renderMembers();
+        }
 
-        el.btnRev.addEventListener('click', () => {
-            showRevenue = !showRevenue;
-            showRevenue ? el.boxRev.classList.remove('hidden') : el.boxRev.classList.add('hidden');
-            el.arrRev.textContent = showRevenue ? '▲' : '▼';
-        });
+        // CRUD
+        window.editMember = function(id) {
+            const m = members.find(x => x.id === id);
+            if (!m) return;
+            editingMemberId = id;
+            document.getElementById('name').value = m.name;
+            document.getElementById('dob').value = formatDateToDMY(m.dob);
+            document.getElementById('transaction_date').value = formatDateToDMY(m.transactionDate || m.startDate);
+            document.getElementById('start_date').value = formatDateToDMY(m.startDate);
+            document.getElementById('transaction_type').value = m.transactionType || 'NJM';
+            document.getElementById('whatsapp').value = m.whatsapp;
+            document.getElementById('use_pt').checked = m.usePT;
+            document.getElementById('tnc_signed').checked = m.tncSigned || false;
+            document.getElementById('source').value = m.source || 'Leads Internal';
+            document.getElementById('revenue_membership').value = m.revenueMembership || '';
+            document.getElementById('revenue_pos').value = m.revenuePOS || '';
 
-        calcAll();
+            const standardDurations = ['1', '3', '6', '12'];
+            if (standardDurations.includes(String(m.durationMonths))) {
+                document.getElementById('duration').value = String(m.durationMonths);
+                document.getElementById('custom_duration').classList.add('hidden');
+                document.getElementById('custom_duration').classList.remove('block');
+            } else {
+                document.getElementById('duration').value = 'custom';
+                document.getElementById('custom_duration').classList.remove('hidden');
+                document.getElementById('custom_duration').classList.add('block');
+                document.getElementById('custom_duration').value = m.durationMonths;
+            }
+
+            document.getElementById('form-title').innerText = "Edit Member";
+            document.getElementById('btn-submit').innerText = "Perbarui Data";
+            document.getElementById('btn-submit').classList.remove('opacity-50');
+            document.getElementById('btn-cancel-edit').classList.remove('hidden');
+            document.getElementById('nav-add-label').innerText = "Edit";
+            window.switchTab('add');
+        }
+
+        window.cancelEditMode = function() {
+            editingMemberId = null;
+            document.getElementById('member-form').reset();
+            document.getElementById('form-title').innerText = "Tambah Member Baru";
+            document.getElementById('btn-submit').innerText = "Simpan Member";
+            document.getElementById('btn-cancel-edit').classList.add('hidden');
+            document.getElementById('custom_duration').classList.add('hidden');
+            document.getElementById('nav-add-label').innerText = "Baru";
+            
+            const today = new Date();
+            const todayDMY = String(today.getDate()).padStart(2, '0') + '/' + String(today.getMonth() + 1).padStart(2, '0') + '/' + today.getFullYear();
+            
+            document.getElementById('start_date').value = todayDMY;
+            document.getElementById('transaction_date').value = todayDMY;
+            window.switchTab('list');
+        }
+
+        document.getElementById('member-form').onsubmit = (e) => {
+            e.preventDefault();
+
+            const btnSubmit = document.getElementById('btn-submit');
+            btnSubmit.classList.add('opacity-50', 'cursor-not-allowed');
+            btnSubmit.disabled = true;
+
+            const selectDuration = document.getElementById('duration').value;
+            let finalDuration = selectDuration;
+            if (selectDuration === 'custom') {
+                const customVal = document.getElementById('custom_duration').value;
+                if (!customVal || isNaN(customVal) || parseInt(customVal) < 1) {
+                    btnSubmit.classList.remove('opacity-50', 'cursor-not-allowed');
+                    btnSubmit.disabled = false;
+                    return window.showCustomAlert('Jumlah bulan kustom tidak valid!', 'Data Gagal');
+                }
+                finalDuration = parseInt(customVal);
+            }
+
+            // Validasi Input Tanggal
+            const dobVal = parseDMYToISO(document.getElementById('dob').value);
+            const trxDateVal = parseDMYToISO(document.getElementById('transaction_date').value);
+            const startDateVal = parseDMYToISO(document.getElementById('start_date').value);
+
+            if(!trxDateVal || !startDateVal) {
+                btnSubmit.classList.remove('opacity-50', 'cursor-not-allowed');
+                btnSubmit.disabled = false;
+                return window.showCustomAlert('Format Tanggal Transaksi / Start Member harus DD/MM/YYYY yang valid!', 'Data Gagal');
+            }
+
+            const memberData = {
+                name: document.getElementById('name').value,
+                dob: dobVal,
+                transactionDate: trxDateVal,
+                startDate: startDateVal,
+                durationMonths: finalDuration,
+                transactionType: document.getElementById('transaction_type').value,
+                whatsapp: document.getElementById('whatsapp').value,
+                usePT: document.getElementById('use_pt').checked,
+                tncSigned: document.getElementById('tnc_signed').checked,
+                source: document.getElementById('source').value,
+                revenueMembership: parseFloat(document.getElementById('revenue_membership').value) || 0,
+                revenuePOS: parseFloat(document.getElementById('revenue_pos').value) || 0
+            };
+
+            // CEK DUPLIKAT NOMOR WHATSAPP SEBELUM MENYIMPAN
+            if (editingMemberId !== null) {
+                const isDuplicate = members.some(m => m.whatsapp === memberData.whatsapp && m.id !== editingMemberId);
+                if (isDuplicate) {
+                    btnSubmit.classList.remove('opacity-50', 'cursor-not-allowed');
+                    btnSubmit.disabled = false;
+                    return window.showCustomAlert('Gagal: Nomor WhatsApp ini sudah terdaftar pada member lain!', 'Data Ganda');
+                }
+
+                const index = members.findIndex(m => m.id === editingMemberId);
+                if (index !== -1) members[index] = { ...members[index], ...memberData };
+                saveDataLocal();
+                showToast('Data diperbarui!');
+                window.cancelEditMode(); 
+            } else {
+                const isDuplicate = members.some(m => m.whatsapp === memberData.whatsapp);
+                if (isDuplicate) {
+                    btnSubmit.classList.remove('opacity-50', 'cursor-not-allowed');
+                    btnSubmit.disabled = false;
+                    return window.showCustomAlert('Gagal: Member dengan No. WhatsApp ini sudah pernah ditambahkan!', 'Data Ganda');
+                }
+
+                const newId = Date.now(); 
+                const newMember = { id: newId, ...memberData, lastChat: null, lastChatTime: null };
+                members.push(newMember);
+                saveDataLocal();
+                
+                showToast('Member disimpan!');
+                e.target.reset();
+                document.getElementById('custom_duration').classList.add('hidden');
+                
+                const today = new Date();
+                const todayDMY = String(today.getDate()).padStart(2, '0') + '/' + String(today.getMonth() + 1).padStart(2, '0') + '/' + today.getFullYear();
+                document.getElementById('start_date').value = todayDMY;
+                document.getElementById('transaction_date').value = todayDMY;
+                window.switchTab('list');
+            }
+
+            window.renderMembers();
+            window.processReport();
+
+            btnSubmit.classList.remove('opacity-50', 'cursor-not-allowed');
+            btnSubmit.disabled = false;
+        };
+
+        window.contactWhatsApp = function(id) {
+            const index = members.findIndex(m => m.id === id);
+            if (index !== -1) {
+                const now = new Date();
+                members[index].lastChat = formatDisplayTimestamp(now.getTime());
+                members[index].lastChatTime = now.getTime(); 
+                
+                saveDataLocal();
+                window.renderMembers();
+                
+                let rawPhone = members[index].whatsapp.replace(/[^0-9]/g, '');
+                if (rawPhone.startsWith('0')) rawPhone = '62' + rawPhone.slice(1);
+                window.open(`https://wa.me/${rawPhone}`, '_blank');
+            }
+        }
+
+        window.deleteMember = async function(id) {
+            const confirmDelete = await window.showCustomConfirm('Hapus data member ini secara permanen?');
+            if(confirmDelete) {
+                members = members.filter(m => m.id !== id);
+                saveDataLocal();
+                window.renderMembers();
+                window.processReport();
+                showToast('Data dihapus!');
+            }
+        }
+
+        function saveDataLocal() {
+            localStorage.setItem('jan_willfitness_v3', JSON.stringify(members));
+        }
+
+        // RENDER LIST, SORT, & FILTER REAL-TIME 
+        function applyDefaultSortDirection() {
+            const sortVal = document.getElementById('sort-select').value;
+            const arrow = document.getElementById('sort-arrow');
+            if (sortVal === 'birthday-date' || sortVal === 'membership-expiry') {
+                sortOrder = 'asc'; arrow.classList.add('rotate-180');
+            } else {
+                sortOrder = 'desc'; arrow.classList.remove('rotate-180');
+            }
+            window.renderMembers();
+        }
+
+        window.toggleSortOrder = function() {
+            sortOrder = (sortOrder === 'desc') ? 'asc' : 'desc';
+            const arrow = document.getElementById('sort-arrow');
+            if (sortOrder === 'asc') arrow.classList.add('rotate-180');
+            else arrow.classList.remove('rotate-180');
+            window.renderMembers();
+        }
+
+        window.renderMembers = function() {
+            const container = document.getElementById('member-container');
+            const search = document.getElementById('search-input').value.toLowerCase();
+            const birthdayAnnounce = document.getElementById('birthday-announcement');
+            const sortVal = document.getElementById('sort-select').value;
+            const filterIndicator = document.getElementById('active-filter-indicator');
+            container.innerHTML = '';
+            
+            let hasBirthday = false;
+            let sortedMembers = [...members];
+            
+            const isFilterActive = Object.values(currentFilters).some(val => val !== 'all');
+            if (isFilterActive) { filterIndicator.classList.remove('hidden'); } 
+            else { filterIndicator.classList.add('hidden'); }
+
+            // Urutkan
+            sortedMembers.sort((a, b) => {
+                let comparison = 0;
+                if (sortVal === 'birthday-date') {
+                    comparison = getDaysUntilNextBirthday(a.dob) - getDaysUntilNextBirthday(b.dob);
+                } else if (sortVal === 'membership-expiry') {
+                    const remA = getDaysRemaining(calculateExpiry(a.startDate, a.durationMonths));
+                    const remB = getDaysRemaining(calculateExpiry(b.startDate, b.durationMonths));
+                    comparison = remA - remB;
+                } else if (sortVal === 'chat-date') {
+                    comparison = (a.lastChatTime || 0) - (b.lastChatTime || 0);
+                } else if (sortVal === 'start-date') {
+                    const tA = new Date(a.startDate).getTime() || 0;
+                    const tB = new Date(b.startDate).getTime() || 0;
+                    comparison = tA - tB;
+                } else {
+                    const tA = new Date(a.transactionDate || a.startDate).getTime() || 0;
+                    const tB = new Date(b.transactionDate || b.startDate).getTime() || 0;
+                    comparison = tA - tB || a.id - b.id;
+                }
+                return (sortOrder === 'asc') ? comparison : -comparison;
+            });
+
+            // Saring Data
+            const filteredMembers = sortedMembers.filter(m => {
+                if (!m.name.toLowerCase().includes(search)) return false;
+                
+                const expiryDate = calculateExpiry(m.startDate, m.durationMonths);
+                const daysLeft = getDaysRemaining(expiryDate);
+                let computedStatus = 'active';
+                if (daysLeft < 0) computedStatus = 'expired';
+                else if (daysLeft <= 7) computedStatus = 'warning';
+
+                if (currentFilters.status !== 'all' && computedStatus !== currentFilters.status) return false;
+                if (currentFilters.type !== 'all' && (m.transactionType || 'NJM') !== currentFilters.type) return false;
+                if (currentFilters.pt !== 'all') {
+                    const wantsPT = currentFilters.pt === 'yes';
+                    if (m.usePT !== wantsPT) return false;
+                }
+                if (currentFilters.tnc !== 'all') {
+                    const wantsTNC = currentFilters.tnc === 'yes';
+                    if (!!m.tncSigned !== wantsTNC) return false;
+                }
+                if (currentFilters.duration !== 'all') {
+                    if (currentFilters.duration === 'custom') {
+                        if (['1', '3', '6', '12'].includes(String(m.durationMonths))) return false;
+                    } else {
+                        if (String(m.durationMonths) !== currentFilters.duration) return false;
+                    }
+                }
+                if (currentFilters.source !== 'all') {
+                    const src = m.source || 'Leads Internal';
+                    if (src !== currentFilters.source) return false;
+                }
+                return true;
+            });
+
+            document.getElementById('stats-badge').innerText = filteredMembers.length;
+
+            if (filteredMembers.length === 0) {
+                container.innerHTML = `<div class="text-center py-10 text-slate-500 text-sm">Tidak ada member yang ditemukan.</div>`;
+                birthdayAnnounce.classList.add('hidden');
+                return;
+            }
+
+            // Tampilkan Seluruh Data Terfilter
+            filteredMembers.forEach(m => {
+                const isBDay = isBirthdayToday(m.dob);
+                if(isBDay) hasBirthday = true;
+
+                const expiryDate = calculateExpiry(m.startDate, m.durationMonths);
+                const daysLeft = getDaysRemaining(expiryDate);
+                const showTrxDate = m.transactionDate ? formatDisplayDateDMY(m.transactionDate) : formatDisplayDateDMY(m.startDate);
+                const showStartDate = formatDisplayDateDMY(m.startDate);
+                const showDob = formatDisplayDateDMY(m.dob);
+
+                let statusClass = "status-active";
+                let statusText = "Aktif";
+                if (daysLeft < 0) { statusClass = "status-expired"; statusText = "Habis"; }
+                else if (daysLeft <= 7) { statusClass = "status-warning"; statusText = "Limit"; }
+
+                const typeBadgeClass = (m.transactionType === 'Renewal') ? 'type-renewal' : 'type-njm';
+                const typeText = m.transactionType || 'NJM';
+                
+                const isExpanded = !!expandedCards[m.id];
+                const row = document.createElement('div');
+                row.className = `rounded-2xl transition-all duration-200 ${isBDay ? 'row-birthday' : 'row-standard'} overflow-hidden`;
+                
+                let headerHTML = `
+                    <div onclick="toggleCardExpand(${m.id})" class="p-4 md:p-5 flex items-center justify-between cursor-pointer hover:bg-white/[0.02]">
+                        <div class="flex items-center gap-4 flex-1">
+                            <div class="hidden md:flex h-10 w-10 shrink-0 rounded-xl bg-sky-500/10 border border-sky-500/20 text-sky-400 items-center justify-center text-sm font-black tracking-widest shadow-sm">
+                                ${getInitials(m.name)}
+                            </div>
+                            <div>
+                                <div class="flex items-center gap-2 mb-1.5 flex-wrap">
+                                    <h3 class="font-extrabold text-slate-100 text-sm md:text-base">${m.name}</h3>
+                                    ${isBDay ? '<span class="text-sm">🎂</span>' : ''}
+                                    <span class="text-[8px] px-1.5 py-[2px] rounded font-black uppercase ${typeBadgeClass}">${typeText}</span>
+                                    ${m.usePT ? '<span class="bg-sky-500 text-slate-950 text-[8px] px-1.5 py-[2px] rounded font-black uppercase">PT</span>' : ''}
+                                    ${m.tncSigned ? '<span class="bg-emerald-500 text-slate-950 text-[8px] px-1.5 py-[2px] rounded font-black uppercase flex items-center gap-0.5"><svg xmlns="http://www.w3.org/2000/svg" class="h-2 w-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" /></svg> TNC</span>' : '<span class="bg-rose-500/20 text-rose-400 border border-rose-500/50 text-[8px] px-1.5 py-[2px] rounded font-black uppercase">NO TNC</span>'}
+                                </div>
+                                <div class="text-[10px] md:text-xs text-slate-400 flex flex-wrap items-center gap-x-3 gap-y-1">
+                                    <span>Lahir: <span class="text-slate-200">${showDob}</span></span>
+                                    <span class="hidden md:inline text-slate-600">•</span>
+                                    <span class="flex items-center gap-1"><svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg> <span class="text-slate-200 truncate max-w-[120px] md:max-w-[200px]">${m.lastChat || 'Belum Di-chat'}</span></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="hidden lg:flex flex-1 items-center justify-center gap-8 text-xs text-slate-400 border-l border-r border-slate-800/50 px-6 mx-6 h-10">
+                             <div class="text-center"><p class="text-[9px] uppercase tracking-widest mb-0.5">Paket</p><p class="text-slate-200 font-bold">${m.durationMonths} Bln</p></div>
+                             <div class="text-center"><p class="text-[9px] uppercase tracking-widest mb-0.5">Berakhir</p><p class="text-slate-200 font-bold">${formatDisplayDateDMY(expiryDate.toISOString().split('T')[0])}</p></div>
+                        </div>
+                        <div class="flex items-center gap-4 md:gap-5 justify-end pl-2">
+                            <div class="text-right">
+                                <span class="text-[8px] font-black px-2 py-0.5 rounded uppercase tracking-widest block mb-1 inline-block ${statusClass}">${statusText}</span>
+                                <p class="text-sm md:text-base font-black text-white">${daysLeft < 0 ? '0' : daysLeft} <span class="text-[9px] font-semibold text-slate-500">HARI</span></p>
+                            </div>
+                            <div class="text-slate-500 transition-transform duration-300 ${isExpanded ? 'rotate-180 text-sky-400' : ''}">
+                                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                let detailHTML = '';
+                if (isExpanded) {
+                    detailHTML = `
+                        <div class="p-4 md:p-6 bg-[#020617]/50 border-t border-slate-800/80 rounded-b-2xl">
+                            <div class="grid grid-cols-2 md:grid-cols-5 gap-3 md:gap-4 bg-[#090d22] p-4 rounded-xl border border-slate-800/50 mb-5">
+                                <div><p class="text-[9px] text-slate-500 uppercase tracking-widest mb-1">Tgl Transaksi</p><p class="text-xs font-semibold text-slate-200">${showTrxDate}</p></div>
+                                <div><p class="text-[9px] text-slate-500 uppercase tracking-widest mb-1">Tgl Start Member</p><p class="text-xs font-semibold text-slate-200">${showStartDate}</p></div>
+                                <div class="hidden md:block"><p class="text-[9px] text-slate-500 uppercase tracking-widest mb-1">Berakhir Pada</p><p class="text-xs font-bold text-sky-400">${formatDisplayDateDMY(expiryDate.toISOString().split('T')[0])}</p></div>
+                                <div><p class="text-[9px] text-slate-500 uppercase tracking-widest mb-1">Rev Membership</p><p class="text-xs font-bold text-emerald-400">${formatRupiah(m.revenueMembership)}</p></div>
+                                <div><p class="text-[9px] text-slate-500 uppercase tracking-widest mb-1">Rev POS (PT)</p><p class="text-xs font-bold text-purple-400">${formatRupiah(m.revenuePOS)}</p></div>
+                                <div class="col-span-2 md:hidden"><p class="text-[9px] text-slate-500 uppercase tracking-widest mb-1">Berakhir Pada</p><p class="text-xs font-bold text-sky-400">${formatDisplayDateDMY(expiryDate.toISOString().split('T')[0])}</p></div>
+                            </div>
+                            <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+                                <div class="w-full md:w-auto flex gap-2">
+                                    <button onclick="deleteMember(${m.id})" class="flex-1 md:flex-none flex items-center justify-center px-4 py-2 bg-rose-500/10 border border-rose-500/20 text-rose-400 text-[10px] font-bold uppercase tracking-widest rounded-lg hover:bg-rose-500 hover:text-white transition-all">Hapus</button>
+                                    <button onclick="editMember(${m.id})" class="flex-1 md:flex-none flex items-center justify-center px-6 py-2 bg-slate-800 border border-slate-700 text-white text-[10px] font-bold uppercase tracking-widest rounded-lg hover:bg-slate-700 transition-all">Edit</button>
+                                </div>
+                                <div class="w-full md:w-auto flex items-center gap-3 justify-between md:justify-end">
+                                    <span class="text-[10px] text-slate-400 font-semibold bg-slate-900 px-3 py-1.5 rounded-lg border border-slate-800 truncate max-w-[120px]">Lead: ${m.source || 'Internal'}</span>
+                                    <button onclick="contactWhatsApp(${m.id})" class="bg-[#22c55e] hover:bg-green-400 text-slate-950 px-6 py-2.5 rounded-lg font-black shadow-lg shadow-green-500/10 flex items-center justify-center gap-2 active:scale-95 transition-all uppercase tracking-widest text-[10px]">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor"><path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" /></svg>
+                                        Hubungi WA
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                row.innerHTML = headerHTML + detailHTML;
+                container.appendChild(row);
+            });
+            birthdayAnnounce.classList.toggle('hidden', !hasBirthday);
+        }
+
+        // LAPORAN LOGIC
+        window.onReportTypeChange = function() {
+            const reportType = document.getElementById('report-type').value;
+            const inputMonth = document.getElementById('input-month');
+            const inputCustom = document.getElementById('input-custom');
+            
+            inputMonth.classList.add('hidden');
+            inputCustom.classList.remove('flex');
+            inputCustom.classList.add('hidden');
+
+            if (reportType === 'month') {
+                inputMonth.classList.remove('hidden');
+            } else if (reportType === 'custom') {
+                inputCustom.classList.remove('hidden');
+                inputCustom.classList.add('flex');
+            }
+        }
+
+        function getStartAndEndOfWeek(dateObj) {
+            const d = new Date(dateObj);
+            const day = d.getDay() || 7; 
+            d.setDate(d.getDate() - day + 1); 
+            d.setHours(0,0,0,0);
+            const end = new Date(d);
+            end.setDate(d.getDate() + 6); 
+            end.setHours(23,59,59,999);
+            return { start: d, end: end };
+        }
+
+        window.processReport = function() {
+            const reportType = document.getElementById('report-type').value;
+            let startDate, endDate;
+            const today = new Date();
+            today.setHours(0,0,0,0);
+            let labelText = "";
+
+            if (reportType === 'today') {
+                startDate = new Date(today);
+                endDate = new Date(today);
+                endDate.setHours(23,59,59,999);
+                labelText = "Laporan: Hari Ini";
+            } else if (reportType === 'this_week') {
+                const weekRange = getStartAndEndOfWeek(today);
+                startDate = weekRange.start;
+                endDate = weekRange.end;
+                labelText = "Laporan: Minggu Ini";
+            } else if (reportType === 'month') {
+                const monthVal = document.getElementById('report-month').value;
+                if (!monthVal || monthVal.length < 7) return window.showCustomAlert('Ketik bulan dengan format MM/YYYY (contoh: 05/2026)!');
+                
+                const parts = monthVal.split('/');
+                const m = parseInt(parts[0]);
+                const y = parseInt(parts[1]);
+
+                if (isNaN(m) || isNaN(y) || m < 1 || m > 12) return window.showCustomAlert('Format bulan tidak valid!');
+
+                startDate = new Date(y, m - 1, 1);
+                startDate.setHours(0,0,0,0);
+                endDate = new Date(y, m, 0); 
+                endDate.setHours(23,59,59,999);
+                
+                const monthNames = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+                labelText = `Laporan: Bulan ${monthNames[m-1]} ${y}`;
+            } else if (reportType === 'custom') {
+                const startVal = parseDMYToISO(document.getElementById('report-start').value);
+                const endVal = parseDMYToISO(document.getElementById('report-end').value);
+                if (!startVal || !endVal) return window.showCustomAlert('Lengkapi rentang tanggal terlebih dahulu (DD/MM/YYYY)!');
+                startDate = new Date(startVal);
+                startDate.setHours(0,0,0,0);
+                endDate = new Date(endVal);
+                endDate.setHours(23,59,59,999);
+                labelText = `Laporan: ${document.getElementById('report-start').value} - ${document.getElementById('report-end').value}`;
+            }
+
+            const filteredList = members.filter(m => {
+                const trxDateStr = m.transactionDate || m.startDate;
+                if (!trxDateStr) return false;
+                const trxDate = new Date(trxDateStr);
+                if (isNaN(trxDate)) return false;  
+                trxDate.setHours(0,0,0,0);
+                return trxDate >= startDate && trxDate <= endDate;
+            });
+
+            let sumMembership = 0, sumPOS = 0, sumCommissionBase = 0; 
+            let leadsCounts = {};
+
+            filteredList.forEach(m => {
+                const revMem = parseFloat(m.revenueMembership) || 0;
+                const revPOS = parseFloat(m.revenuePOS) || 0;
+                sumMembership += revMem; sumPOS += revPOS;
+                if (m.tncSigned) sumCommissionBase += (revMem + revPOS);
+                const src = m.source || 'Leads Internal';
+                leadsCounts[src] = (leadsCounts[src] || 0) + 1;
+            });
+
+            const totalCombined = sumMembership + sumPOS;
+
+            let commissionPct = 0;
+            if (sumCommissionBase >= 150000000) commissionPct = 9;
+            else if (sumCommissionBase >= 130000000) commissionPct = 8;
+            else if (sumCommissionBase >= 110000000) commissionPct = 7;
+            else if (sumCommissionBase >= 90000000) commissionPct = 6;
+            else if (sumCommissionBase >= 70000000) commissionPct = 5;
+            else if (sumCommissionBase >= 50000000) commissionPct = 4;
+            
+            const commissionGross = sumCommissionBase * (commissionPct / 100);
+            const commissionTax = commissionGross * 0.025; // Potongan pajak 2.5%
+            const commissionNet = commissionGross - commissionTax;
+
+            document.getElementById('report-label').innerText = labelText;
+            document.getElementById('report-member-count').innerText = filteredList.length;
+            document.getElementById('report-membership-rev').innerText = formatRupiah(sumMembership);
+            document.getElementById('report-pos-rev').innerText = formatRupiah(sumPOS);
+            document.getElementById('report-total-rev').innerText = formatRupiah(totalCombined);
+            document.getElementById('report-commission-pct').innerText = commissionPct + '%';
+            
+            const elNet = document.getElementById('report-commission-net');
+            if (elNet) elNet.innerText = formatRupiah(commissionNet);
+            const elGross = document.getElementById('report-commission-gross');
+            if (elGross) elGross.innerText = formatRupiah(commissionGross);
+            const elTax = document.getElementById('report-commission-tax');
+            if (elTax) elTax.innerText = '- ' + formatRupiah(commissionTax);
+
+            // Backward compatibility
+            const elVal = document.getElementById('report-commission-val');
+            if (elVal) elVal.innerText = formatRupiah(commissionNet);
+
+            const breakdownContainer = document.getElementById('leads-breakdown-container');
+            breakdownContainer.innerHTML = '';
+            
+            const totalFiltered = filteredList.length;
+            if (totalFiltered === 0) {
+                breakdownContainer.innerHTML = `<p class="text-xs text-slate-500 text-center italic py-4">Tidak ada transaksi pada periode ini.</p>`;
+            } else {
+                const sortedLeads = Object.entries(leadsCounts).sort((a,b) => b[1] - a[1]);
+                sortedLeads.forEach(([sourceName, count]) => {
+                    const percentage = Math.round((count / totalFiltered) * 100);
+                    const leadRow = document.createElement('div');
+                    leadRow.className = "space-y-1.5";
+                    leadRow.innerHTML = `
+                        <div class="flex justify-between text-[11px] font-bold">
+                            <span class="text-slate-300 uppercase tracking-widest">${sourceName}</span>
+                            <span class="text-sky-400">${count} Trans. <span class="text-slate-500 font-normal">(${percentage}%)</span></span>
+                        </div>
+                        <div class="w-full bg-[#020617] h-2 rounded-full overflow-hidden border border-slate-800">
+                            <div class="bg-gradient-to-r from-sky-600 to-sky-400 h-full rounded-full" style="width: ${percentage}%"></div>
+                        </div>
+                    `;
+                    breakdownContainer.appendChild(leadRow);
+                });
+            }
+
+            const reportMemberList = document.getElementById('report-member-list');
+            if (reportMemberList) {
+                reportMemberList.innerHTML = '';
+
+                if (totalFiltered === 0) {
+                    reportMemberList.innerHTML = `<p class="text-xs text-slate-500 text-center italic py-4">Tidak ada data member pada periode ini.</p>`;
+                } else {
+                    const reportSorted = [...filteredList].sort((a, b) => {
+                        const dateA = new Date(a.transactionDate || a.startDate).getTime() || 0;
+                        const dateB = new Date(b.transactionDate || b.startDate).getTime() || 0;
+                        return dateB - dateA || b.id - a.id;
+                    });
+
+                    reportSorted.forEach(m => {
+                        const revMem = parseFloat(m.revenueMembership) || 0;
+                        const revPos = parseFloat(m.revenuePOS) || 0;
+                        const totalRev = revMem + revPos;
+                        const trxDate = m.transactionDate ? formatDisplayDateDMY(m.transactionDate) : formatDisplayDateDMY(m.startDate);
+                        const typeText = m.transactionType || 'NJM';
+                        const typeColor = (typeText === 'Renewal') ? 'text-purple-400' : 'text-blue-400';
+
+                        const row = document.createElement('div');
+                        row.className = "flex justify-between items-center p-4 bg-[#020617] rounded-xl border border-slate-800/50 hover:border-slate-700 transition-colors";
+                        row.innerHTML = `
+                            <div class="flex items-center gap-4">
+                                <div class="hidden md:flex h-9 w-9 rounded-xl bg-sky-500/10 border border-sky-500/20 text-sky-400 items-center justify-center text-xs font-black tracking-widest shadow-sm">
+                                    ${getInitials(m.name)}
+                                </div>
+                                <div>
+                                    <h4 class="text-sm font-bold text-white mb-0.5">${m.name}</h4>
+                                    <div class="flex items-center gap-2 text-[10px] text-slate-500 flex-wrap">
+                                        <span>Trx: <span class="text-slate-300 font-semibold">${trxDate}</span></span>
+                                        <span class="hidden sm:inline">•</span>
+                                        <span class="font-bold uppercase tracking-wider ${typeColor}">${typeText}</span>
+                                        <span class="hidden sm:inline">•</span>
+                                        <span class="font-bold uppercase tracking-wider ${m.tncSigned ? 'text-emerald-400' : 'text-rose-400'}">${m.tncSigned ? 'TNC ✔' : 'NO TNC ✖'}</span>
+                                        ${m.usePT ? `<span class="hidden sm:inline">•</span><span class="font-bold text-sky-400">PT</span>` : ''}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-[9px] text-slate-500 uppercase tracking-widest mb-1 truncate max-w-[100px] sm:max-w-[200px]">${m.durationMonths} Bulan | ${m.source || 'Internal'}</p>
+                                <p class="text-sm font-bold text-emerald-400">${formatRupiah(totalRev)}</p>
+                            </div>
+                        `;
+                        reportMemberList.appendChild(row);
+                    });
+                }
+            }
+        }
+
+        window.exportCSV = function() {
+            if (members.length === 0) return window.showCustomAlert('Data member kosong!');
+            let csv = "Nama,Tgl Lahir,Usia,Tgl Transaksi,Tipe Transaksi,Tgl Start Member,Durasi Bulan,Tgl Berakhir,WhatsApp,Pakai PT,Done Sign TNC,Sumber Leads,Revenue Membership,Revenue POS,Terakhir Chat\n";
+            members.forEach(m => {
+                const expiry = calculateExpiry(m.startDate, m.durationMonths);
+                const trxDate = m.transactionDate || m.startDate;
+                const typeTx = m.transactionType || 'NJM';
+                csv += `"${m.name}","${m.dob}",${calculateAge(m.dob)},"${trxDate}","${typeTx}","${m.startDate}",${m.durationMonths},"${expiry.toISOString().split('T')[0]}","${m.whatsapp}","${m.usePT ? 'Ya' : 'Tidak'}","${m.tncSigned ? 'Ya' : 'Tidak'}","${m.source || 'Leads Internal'}",${m.revenueMembership || 0},${m.revenuePOS || 0},"${m.lastChat || '-'}"\n`;
+            });
+            downloadFile(csv, `WILLFITNESS_EXCEL_${new Date().getTime()}.csv`, 'text/csv');
+        }
+        
+        window.exportBackup = function() {
+            if (members.length === 0) return window.showCustomAlert('Data kosong!');
+            downloadFile(JSON.stringify(members), `WILLFITNESS_BACKUP_${new Date().getTime()}.json`, 'application/json');
+        }
+        
+        window.triggerImport = function() { document.getElementById('import-file').click(); }
+        
+        window.handleImport = async function(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = async (e) => {
+                let importedData;
+                try {
+                    importedData = JSON.parse(e.target.result);
+                } catch (err) {
+                    console.error("JSON Parse Error:", err);
+                    return window.showCustomAlert('Format file bukan JSON yang valid!', 'Error Format File');
+                }
+
+                if (!Array.isArray(importedData)) {
+                    return window.showCustomAlert('Isi file tidak sesuai format database member!', 'Error Struktur Data');
+                }
+
+                const normalizedData = importedData.map(m => {
+                    let txDate = sanitizeDate(m.transactionDate);
+                    let stDate = sanitizeDate(m.startDate);
+                    if(txDate === '') txDate = stDate;
+                    if(stDate === '') stDate = txDate;
+                    
+                    return {
+                        id: m.id || Date.now() + Math.random(), 
+                        name: m.name || '',
+                        dob: sanitizeDate(m.dob) || '',
+                        transactionDate: txDate,
+                        startDate: stDate,
+                        durationMonths: m.durationMonths || 1,
+                        transactionType: m.transactionType || 'NJM',
+                        whatsapp: m.whatsapp || '',
+                        usePT: !!m.usePT,
+                        tncSigned: !!m.tncSigned,
+                        source: m.source || 'Leads Internal',
+                        revenueMembership: parseFloat(m.revenueMembership) || 0,
+                        revenuePOS: parseFloat(m.revenuePOS) || 0,
+                        lastChat: m.lastChat || null,
+                        lastChatTime: m.lastChatTime || null
+                    }
+                });
+
+                if (await window.showCustomConfirm(`Memuat masuk ${normalizedData.length} data. Data saat ini akan diganti. Lanjut?`)) {
+                    members = normalizedData; 
+                    saveDataLocal(); 
+                    window.renderMembers(); 
+                    window.processReport();
+                    window.showCustomAlert('Cadangan berhasil diimpor, data dipulihkan!', 'Selesai');
+                }
+                
+                document.getElementById('import-file').value = '';
+            };
+            reader.readAsText(file);
+        }
+
+        function downloadFile(content, fileName, contentType) {
+            const a = document.createElement("a");
+            const file = new Blob([content], { type: contentType });
+            a.href = URL.createObjectURL(file);
+            a.download = fileName;
+            a.click();
+            URL.revokeObjectURL(a.href);
+        }
+
+        // Initialize Application
+        initUI(); 
     </script>
 </body>
 </html>
