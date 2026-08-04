@@ -188,6 +188,7 @@
           { id: 'a3', group: 'All Club', name: '12 Bulan', total: 2838000, rev: 2580000, pb1: 258000, days: 360, minPT: 0 },
           { id: 'a3_new', group: 'All Club', name: '12 Bulan', total: 3531000, rev: 3210000, pb1: 321000, days: 360, minPT: 0 }, // Tambahan Baru
           { id: 'a4', group: 'All Club', name: '12+2 Bulan', total: 3619000, rev: 3290000, pb1: 329000, days: 420, minPT: 0 },
+          { id: 'a5', group: 'All Club', name: '12+1 Bulan', total: 3075000, rev: 2795909, pb1: 279091, days: 390, minPT: 0 },
 
           { id: 'b1', group: 'Bundling (With PT)', name: '3 Bulan', total: 660000, rev: 600000, pb1: 60000, days: 90, minPT: 24 },
           { id: 'b2', group: 'Bundling (With PT)', name: '6 Bulan', total: 1320000, rev: 1200000, pb1: 120000, days: 180, minPT: 24 },
@@ -228,35 +229,35 @@
             infoMemMo: document.getElementById('infoMemberPerMonth'),
             infoMemDays: document.getElementById('infoMemberDays'),
 
-        function showToast(message) {
-            const toast = document.getElementById('toast-notif');
-            document.getElementById('toast-message').innerText = message;
-            toast.classList.remove('translate-x-[150%]');
-            setTimeout(() => { toast.classList.add('translate-x-[150%]'); }, 3000);
-        }
+            checkPT: document.getElementById('checkPT'),
+            boxPT: document.getElementById('boxPT'),
+            selPT1: document.getElementById('selectPT1'),
+            selPT2: document.getElementById('selectPT2'),
+            selPT3: document.getElementById('selectPT3'),
+            infoPTSess: document.getElementById('infoPTPerSession'),
+            infoPTTotSess: document.getElementById('infoPTTotalSessions'),
+            lockIcon: document.getElementById('lockIcon'),
+            warnBund: document.getElementById('warnBundling'),
 
-        function formatDisplayDateDMY(dateStr) {
-            if (!dateStr) return '-';
-            const parts = dateStr.split('-');
-            if (parts.length !== 3) return dateStr;
-            const year = parts[0];
-            const month = parts[1].padStart(2, '0');
-            const day = parts[2].padStart(2, '0');
-            return `${day}/${month}/${year}`;
-        }
+            btnDisc: document.getElementById('btnDiscount'),
+            boxDisc: document.getElementById('boxDiscount'),
+            arrDisc: document.getElementById('arrowDiscount'),
+            inpDisc: document.getElementById('inputDiscount'),
 
-        function formatDisplayTimestamp(timestamp) {
-            if (!timestamp) return '-';
-            const date = new Date(timestamp);
-            const day = String(date.getDate()).padStart(2, '0');
-            const month = String(date.getMonth() + 1).padStart(2, '0');
-            const year = date.getFullYear();
-            return `${day}/${month}/${year}`;
-        }
+            btnRec: document.getElementById('btnReceipt'),
+            boxRecDet: document.getElementById('boxReceiptDetails'),
+            arrRec: document.getElementById('arrowReceipt'),
+            borderRec: document.getElementById('borderReceipt'),
+            textGrand: document.getElementById('grandTotalText'),
+            textGrandMo: document.getElementById('grandTotalPerMonthText'),
 
-        function formatRupiah(num) {
-            if (num === undefined || num === null || isNaN(num) || num === '') return 'Rp 0';
-            return 'Rp ' + parseInt(num, 10).toLocaleString('id-ID');
+            btnRev: document.getElementById('btnRevenue'),
+            boxRev: document.getElementById('boxRevenue'),
+            arrRev: document.getElementById('arrowRevenue'),
+        };
+
+        function formatRp(num) { 
+            return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(num); 
         }
 
         // BIKIN OPSI MEMBERSHIP
