@@ -3,179 +3,209 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Willfitness Calculator Pro</title>
-    
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    
-    <!-- Tailwind CSS -->
+    <title>Willfitness Calculator Pro (Locked)</title>
     <script src="https://cdn.tailwindcss.com"></script>
-
     <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f1f5f9; }
-        .smooth-transition { transition: all 0.3s ease-in-out; }
-        .glass-effect { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
-        .premium-shadow { box-shadow: 0 20px 40px -15px rgba(0,0,0,0.1); }
+        body { font-family: 'Segoe UI', sans-serif; background-color: #f1f5f9; }
+        .hidden { display: none !important; }
         
-        /* Custom Select Styling */
-        select { appearance: none; background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e"); background-position: right 0.5rem center; background-repeat: no-repeat; background-size: 1.5em 1.5em; padding-right: 2.5rem; }
+        /* Layar Kunci */
+        #lockScreen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #0f172a; z-index: 9999;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+        }
+        #lockBox {
+            background: #1e293b; padding: 2rem; border-radius: 1rem; width: 90%; max-w-sm;
+            text-align: center; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+            border: 1px solid #334155;
+        }
     </style>
 </head>
-<body class="antialiased min-h-screen flex flex-col items-center justify-center p-4 sm:p-8">
+<body class="antialiased min-h-screen flex flex-col items-center justify-center p-4">
 
-    <div class="w-full max-w-2xl glass-effect rounded-[2rem] premium-shadow border border-white overflow-hidden relative">
-        
-        <!-- Background Ornaments -->
-        <div class="absolute top-0 left-0 w-full h-48 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 overflow-hidden z-0">
-            <div class="absolute -top-24 -right-24 w-48 h-48 bg-emerald-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20"></div>
-            <div class="absolute -bottom-24 -left-24 w-64 h-64 bg-indigo-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20"></div>
-        </div>
-
-        <!-- HEADER -->
-        <div class="relative z-10 p-8 text-center">
-            <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 mb-4 shadow-lg text-emerald-400">
-                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.4 14.4 9.6 9.6"/><path d="M18.65 21.35a2 2 0 0 1-2.828 0l-2.829-2.828a2 2 0 0 1 0-2.828l2.829-2.829a2 2 0 0 1 2.828 0l2.829 2.829a2 2 0 0 1 0 2.828z"/><path d="m21.5 21.5-1.4-1.4"/><path d="M3.9 3.9 2.5 2.5"/><path d="M6.404 12.768a2 2 0 0 1-2.829 0L.747 9.939a2 2 0 0 1 0-2.828l2.828-2.829a2 2 0 0 1 2.829 0l2.828 2.829a2 2 0 0 1 0 2.828z"/></svg>
+    <!-- ==================== LAYAR KUNCI PASSWORD ==================== -->
+    <div id="lockScreen">
+        <div id="lockBox" class="max-w-sm w-full">
+            <div class="w-16 h-16 bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-4 border border-slate-600">
+                <span class="text-3xl">🔒</span>
             </div>
-            <h1 class="text-3xl font-extrabold text-white tracking-tight">Willfitness Calculator</h1>
-            <p class="text-slate-300 text-sm mt-2 font-medium tracking-wide">ESTIMASI BIAYA & PENAWARAN</p>
-        </div>
-
-        <!-- KONTEN FORM -->
-        <div class="relative z-10 bg-white p-6 sm:p-8 rounded-t-[2.5rem] -mt-6 shadow-[0_-10px_40px_rgba(0,0,0,0.05)]">
-            <div class="space-y-8">
-                
-                <!-- 1. MEMBERSHIP SECTION -->
-                <div class="bg-slate-50/50 rounded-2xl p-5 sm:p-6 border border-slate-100 smooth-transition hover:border-indigo-100 hover:shadow-md hover:bg-white">
-                    <label class="flex items-center justify-between cursor-pointer group mb-4">
-                        <div class="flex items-center space-x-3">
-                            <div class="w-10 h-10 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/><path d="M18 14h-8"/><path d="M15 18h-5"/><path d="M10 6h8v4h-8V6Z"/></svg>
-                            </div>
-                            <h2 class="text-lg font-bold text-slate-800">Paket Membership</h2>
-                        </div>
-                        <input type="checkbox" id="checkMember" checked class="w-6 h-6 rounded-md border-slate-300 cursor-pointer accent-indigo-600"/>
-                    </label>
-                    
-                    <div id="boxMember" class="mt-4 smooth-transition">
-                        <select id="selectMember" class="w-full p-4 rounded-xl border border-slate-200 bg-white text-slate-700 font-semibold focus:ring-4 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none hover:border-slate-300 transition-all shadow-sm">
-                            <!-- Diisi Otomatis JS -->
-                        </select>
-                        <div class="mt-3 flex items-center justify-between text-sm bg-emerald-50/80 px-4 py-3 rounded-xl border border-emerald-100/50">
-                            <span class="text-emerald-700 flex items-center"><span class="mr-2">💡</span>Estimasi Bulanan:</span>
-                            <span class="font-bold text-emerald-800"><span id="infoMemberPerMonth">Rp 0</span><span class="text-xs text-emerald-600/70 font-medium ml-1">/ bln (Aktif <span id="infoMemberDays">0</span> Hari)</span></span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 2. PERSONAL TRAINER SECTION -->
-                <div class="bg-slate-50/50 rounded-2xl p-5 sm:p-6 border border-slate-100 smooth-transition hover:border-indigo-100 hover:shadow-md hover:bg-white relative">
-                    <label class="flex items-center justify-between cursor-pointer group mb-4">
-                        <div class="flex items-center space-x-3">
-                            <div class="w-10 h-10 rounded-xl bg-orange-100 text-orange-600 flex items-center justify-center">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                            </div>
-                            <h2 class="text-lg font-bold text-slate-800 flex items-center">
-                                Personal Trainer 
-                                <span id="lockIcon" class="hidden ml-2 flex items-center justify-center w-5 h-5 bg-amber-100 text-amber-600 rounded-full" title="Terkunci Bundling">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                                </span>
-                            </h2>
-                        </div>
-                        <input type="checkbox" id="checkPT" class="w-6 h-6 rounded-md border-slate-300 cursor-pointer accent-indigo-600"/>
-                    </label>
-
-                    <div id="warnBundling" class="hidden mb-4 px-4 py-2.5 bg-amber-50 text-amber-700 text-xs font-semibold rounded-lg border border-amber-200/50 flex items-start">
-                        <span class="mr-2">⚠️</span> Kategori Bundling mewajibkan Kolom PT 1 mencapai batas minimal sesi.
-                    </div>
-
-                    <div id="boxPT" class="hidden mt-2 space-y-4 smooth-transition">
-                        <!-- 3 KOLOM MIX -->
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <div class="space-y-1.5">
-                                <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-1">Sesi Utama (PT 1)</label>
-                                <select id="selectPT1" class="w-full p-3.5 rounded-xl border border-slate-200 bg-white text-slate-800 font-semibold focus:ring-4 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none shadow-sm"></select>
-                            </div>
-                            <div class="space-y-1.5">
-                                <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-1">Mix 1 (PT 2)</label>
-                                <select id="selectPT2" class="w-full p-3.5 rounded-xl border border-slate-200 bg-white text-slate-500 font-medium focus:ring-4 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none shadow-sm"></select>
-                            </div>
-                            <div class="space-y-1.5">
-                                <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-1">Mix 2 (PT 3)</label>
-                                <select id="selectPT3" class="w-full p-3.5 rounded-xl border border-slate-200 bg-white text-slate-500 font-medium focus:ring-4 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none shadow-sm"></select>
-                            </div>
-                        </div>
-
-                        <div class="flex items-center justify-between text-sm bg-emerald-50/80 px-4 py-3 rounded-xl border border-emerald-100/50">
-                            <span class="text-emerald-700 flex items-center"><span class="mr-2">⚡</span>Estimasi per Sesi:</span>
-                            <span class="font-bold text-emerald-800"><span id="infoPTPerSession">Rp 0</span><span class="text-xs text-emerald-600/70 font-medium ml-1">(Total <span id="infoPTTotalSessions">0</span> Sesi)</span></span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 3. DISKON MANUAL -->
-                <div class="pt-2">
-                    <button id="btnDiscount" class="flex items-center justify-between w-full p-4 rounded-xl bg-slate-100/50 text-slate-600 font-semibold hover:bg-slate-100 hover:text-indigo-600 transition-colors outline-none group border border-transparent hover:border-slate-200">
-                        <div class="flex items-center space-x-3">
-                            <svg class="text-slate-400 group-hover:text-indigo-500" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><circle cx="12" cy="12" r="4"/></svg>
-                            <span>Terapkan Potongan Harga Tambahan</span>
-                        </div>
-                        <span id="arrowDiscount" class="text-xs transition-transform duration-300 text-slate-400 group-hover:text-indigo-500">▼</span>
-                    </button>
-                    
-                    <div id="boxDiscount" class="hidden mt-3 smooth-transition">
-                        <div class="relative group">
-                            <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-slate-400 font-bold">Rp</span>
-                            <input type="text" id="inputDiscount" placeholder="0" class="w-full pl-12 p-4 rounded-xl border border-slate-200 bg-white font-bold text-slate-800 focus:ring-4 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none shadow-sm placeholder-slate-300">
-                        </div>
-                        <p class="text-[11px] text-slate-400 mt-2 ml-2 font-medium">*Nominal ini langsung memotong Total Pembayaran Akhir.</p>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-
-        <!-- 4. STRUK PEMBAYARAN -->
-        <div class="bg-slate-900 relative overflow-hidden">
-            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-500 via-indigo-500 to-emerald-500 opacity-50"></div>
-            <svg class="absolute -right-10 -bottom-10 text-slate-800/50 w-64 h-64 transform rotate-12" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 17V7"/></svg>
+            <h2 class="text-xl font-bold text-white mb-2">Akses Terkunci</h2>
+            <p class="text-slate-400 text-sm mb-6">Masukkan kata sandi untuk menggunakan Willfitness Calculator.</p>
             
-            <div class="relative z-10 p-6 sm:p-8">
-                <div id="btnReceipt" class="flex justify-between items-center cursor-pointer group">
-                    <h2 class="text-emerald-400 text-xs font-bold uppercase tracking-widest flex items-center"><span class="mr-2">🧾</span> Total Pembayaran</h2>
-                    <span id="arrowReceipt" class="text-slate-500 group-hover:text-emerald-400 transition-colors text-xs">▲</span>
+            <input type="password" id="inputPassword" placeholder="Masukkan Password" 
+                   class="w-full p-3 rounded-lg border border-slate-600 bg-slate-800 text-white placeholder-slate-500 mb-4 focus:outline-none focus:border-emerald-500 text-center tracking-widest">
+            
+            <button id="btnUnlock" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 px-4 rounded-lg transition-colors">
+                Buka Kalkulator
+            </button>
+            <p id="errorMsg" class="text-rose-400 text-xs mt-3 hidden">❌ Password salah. Coba lagi.</p>
+        </div>
+    </div>
+
+    <!-- ==================== KALKULATOR UTAMA (Disembunyikan awalnya) ==================== -->
+    <div id="mainApp" class="w-full max-w-2xl bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-100 hidden">
+        <!-- Header -->
+        <div class="bg-indigo-600 p-6 text-white text-center">
+            <h1 class="text-2xl font-bold tracking-tight">Willfitness Calculator</h1>
+            <p class="text-indigo-100 text-sm mt-1">Simulasi Total Harga Membership & PT</p>
+        </div>
+
+        <div class="p-6 space-y-6">
+            <!-- Membership Section -->
+            <div class="space-y-3">
+                <label class="flex items-center space-x-3 cursor-pointer">
+                    <input type="checkbox" id="checkMember" checked class="w-5 h-5 text-indigo-600 rounded border-gray-300">
+                    <span class="font-semibold text-lg text-slate-700">Paket Membership</span>
+                </label>
+                <div id="boxMember" class="pl-8 p-4 bg-slate-50 rounded-xl border border-slate-200">
+                    <select id="selectMember" class="w-full p-3 rounded-lg border border-slate-300 bg-white font-medium outline-none">
+                        <!-- ONE CLUB -->
+                        <optgroup label="ONE CLUB">
+                            <option value="o1">1 Bulan (One Club)</option>
+                            <option value="o2" selected>3 Bulan (One Club - Bawah)</option>
+                            <option value="o3">3 Bulan (One Club - Atas)</option>
+                            <option value="o4">6 Bulan (One Club - Bawah)</option>
+                            <option value="o5">6 Bulan (One Club - Atas)</option>
+                        </optgroup>
+                        <!-- ALL CLUB -->
+                        <optgroup label="ALL CLUB">
+                            <option value="a1">3 Bulan (All Club)</option>
+                            <option value="a2">6 Bulan (All Club)</option>
+                            <option value="a3">12 Bulan (All Club)</option>
+                            <option value="a3_new">12 Bulan (All Club - Free 1 Bln)</option>
+                            <option value="a4">12+2 Bulan (All Club)</option>
+                        </optgroup>
+                        <!-- BUNDLING -->
+                        <optgroup label="BUNDLING (WITH PT)">
+                            <option value="b1">3 Bulan (Bundling - Min. 24 Sesi)</option>
+                            <option value="b2">6 Bulan (Bundling - Min. 24 Sesi)</option>
+                            <option value="b3">12 Bulan (Bundling - Min. 3 Sesi)</option>
+                            <option value="b4">12 Bulan (Bundling - Min. 16 Sesi)</option>
+                        </optgroup>
+                    </select>
+                    <div class="mt-3 text-sm text-emerald-600 bg-emerald-50 px-3 py-2 rounded-lg border border-emerald-100">
+                        Jatuhnya <strong id="infoMemberPerMonth">Rp 0</strong> / bln (<span id="infoMemberDays">0</span> Hari)
+                    </div>
                 </div>
+            </div>
 
-                <div id="boxReceiptDetails" class="space-y-5 mt-6 animate-in"></div>
-
-                <div id="borderReceipt" class="mt-6 pt-6 border-t border-slate-700/80">
-                    <div class="flex justify-between items-end">
-                        <div class="pb-1"><span class="text-slate-400 text-sm font-semibold block mb-1">TOTAL AKHIR</span></div>
-                        <div class="text-right">
-                            <span id="grandTotalText" class="text-4xl sm:text-5xl font-extrabold text-white tracking-tight drop-shadow-md block">Rp 0</span>
-                            <span id="grandTotalPerMonthText" class="text-sm text-emerald-400 mt-2 block font-medium"></span>
+            <!-- PT Section (3 KOLOM MIX) -->
+            <div class="space-y-3">
+                <label class="flex items-center space-x-3 cursor-pointer">
+                    <input type="checkbox" id="checkPT" class="w-5 h-5 text-indigo-600 rounded border-gray-300">
+                    <span class="font-semibold text-lg text-slate-700 flex items-center">
+                        Paket Personal Trainer (Mix) <span id="lockIcon" class="hidden ml-2 text-amber-500">🔒</span>
+                    </span>
+                </label>
+                <div id="warnBundling" class="hidden pl-8 text-xs text-amber-600 font-medium">
+                    *Kategori Bundling mewajibkan Kolom PT 1 mencapai batas minimal sesi.
+                </div>
+                <div id="boxPT" class="hidden pl-8 p-4 bg-slate-50 rounded-xl border border-slate-200">
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <div class="space-y-1">
+                            <label class="text-xs font-bold text-slate-500 uppercase">PT 1 (Utama)</label>
+                            <select id="selectPT1" class="w-full p-2.5 text-sm rounded-lg border border-slate-300 bg-white outline-none font-medium"></select>
                         </div>
+                        <div class="space-y-1">
+                            <label class="text-xs font-bold text-slate-400 uppercase">PT 2 (Mix)</label>
+                            <select id="selectPT2" class="w-full p-2.5 text-sm rounded-lg border border-slate-300 bg-white outline-none text-slate-600"></select>
+                        </div>
+                        <div class="space-y-1">
+                            <label class="text-xs font-bold text-slate-400 uppercase">PT 3 (Mix)</label>
+                            <select id="selectPT3" class="w-full p-2.5 text-sm rounded-lg border border-slate-300 bg-white outline-none text-slate-600"></select>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                        <div class="flex items-center text-sm text-emerald-600 bg-emerald-50 px-3 py-2 rounded-lg border border-emerald-100 flex-1">
+                            Jatuhnya <strong id="infoPTPerSession">Rp 0</strong> / sesi (Total <span id="infoPTTotalSessions">0</span> Sesi)
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Diskon Total -->
+            <div class="pt-4 border-t border-slate-200">
+                <button id="btnDiscount" class="flex items-center justify-between w-full font-semibold text-slate-700 outline-none">
+                    <span>Penyesuaian Harga Total</span>
+                    <span id="arrowDiscount">▼</span>
+                </button>
+                <div id="boxDiscount" class="hidden mt-4">
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-500">Rp</span>
+                        <input type="text" id="inputDiscount" placeholder="0" class="w-full pl-10 p-3 rounded-lg border border-slate-300 bg-white outline-none">
+                    </div>
+                    <p class="text-xs text-slate-500 mt-1">*Nominal ini memotong total akhir pembayaran.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Struk Ringkasan -->
+        <div class="bg-slate-800 text-white p-6">
+            <div id="btnReceipt" class="flex justify-between items-center mb-4 cursor-pointer">
+                <h2 class="text-slate-300 text-sm font-medium uppercase tracking-wider">Total Pembayaran</h2>
+                <span id="arrowReceipt" class="text-slate-400">▲</span>
+            </div>
+
+            <div id="boxReceiptDetails" class="space-y-4 mb-4"></div>
+
+            <div id="borderReceipt" class="border-t border-slate-600 pt-4">
+                <div class="flex justify-between items-end">
+                    <span class="text-lg font-medium text-slate-200">Total Akhir</span>
+                    <div class="text-right">
+                        <span id="grandTotalText" class="text-3xl font-bold text-emerald-400 block">Rp 0</span>
+                        <span id="grandTotalPerMonthText" class="text-sm text-emerald-300/80 mt-1 block font-medium"></span>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- 5. REVENUE INTERNAL -->
-    <div class="w-full max-w-2xl mt-6 pb-12">
-        <button id="btnRevenue" class="flex items-center justify-between w-full p-4 bg-slate-200/60 hover:bg-slate-200 text-slate-600 rounded-2xl font-semibold text-sm outline-none transition-colors group border border-slate-300/50">
-            <div class="flex items-center space-x-3">
-                <svg class="text-slate-400 group-hover:text-slate-600" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><line x1="3" x2="21" y1="9" y2="9"/><line x1="9" x2="9" y1="21" y2="9"/></svg>
-                <span>Rincian Revenue Diterima (Khusus Internal)</span>
-            </div>
-            <span id="arrowRevenue" class="text-xs text-slate-400 group-hover:text-slate-600">▼</span>
+    <!-- Rincian Revenue Internal -->
+    <div id="revenueApp" class="w-full max-w-2xl mt-4 pb-10 hidden">
+        <button id="btnRevenue" class="flex items-center justify-center space-x-2 w-full p-3 bg-slate-200 hover:bg-slate-300 text-slate-600 rounded-xl font-semibold text-sm outline-none">
+            <span>Rincian Revenue Diterima (Internal Only)</span>
+            <span id="arrowRevenue">▼</span>
         </button>
-        <div id="boxRevenue" class="hidden mt-4 p-6 bg-white border border-slate-200 rounded-2xl premium-shadow space-y-5"></div>
+        <div id="boxRevenue" class="hidden mt-3 p-5 bg-white border border-slate-200 rounded-xl shadow-sm space-y-4"></div>
     </div>
 
+    <!-- LOGIKA JAVASCRIPT -->
     <script>
-        // DATA MASTER (Dengan Tambahan 12 Bulan All Club Baru)
+        // ==================== SISTEM PASSWORD ====================
+        const PASSWORD_BENAR = "Rahasia123@";
+        
+        const lockScreen = document.getElementById('lockScreen');
+        const mainApp = document.getElementById('mainApp');
+        const revenueApp = document.getElementById('revenueApp');
+        const inputPassword = document.getElementById('inputPassword');
+        const btnUnlock = document.getElementById('btnUnlock');
+        const errorMsg = document.getElementById('errorMsg');
+
+        function checkPassword() {
+            if (inputPassword.value === PASSWORD_BENAR) {
+                // Sembunyikan layar gembok, Tampilkan kalkulator
+                lockScreen.classList.add('hidden');
+                mainApp.classList.remove('hidden');
+                revenueApp.classList.remove('hidden');
+                // Panggil hitungan pertama kali
+                calculateAll();
+            } else {
+                errorMsg.classList.remove('hidden');
+                inputPassword.value = '';
+                inputPassword.focus();
+            }
+        }
+
+        btnUnlock.addEventListener('click', checkPassword);
+        inputPassword.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') checkPassword();
+        });
+
+
+        // ==================== SISTEM KALKULATOR (Sama seperti sebelumnya) ====================
         const membershipPackages = [
           { id: 'o1', group: 'One Club', name: '1 Bulan', total: 616000, rev: 560000, pb1: 56000, days: 30, minPT: 0 },
           { id: 'o2', group: 'One Club', name: '3 Bulan', total: 1056000, rev: 960000, pb1: 96000, days: 90, minPT: 0 },
@@ -186,9 +216,8 @@
           { id: 'a1', group: 'All Club', name: '3 Bulan', total: 1419000, rev: 1290000, pb1: 129000, days: 90, minPT: 0 },
           { id: 'a2', group: 'All Club', name: '6 Bulan', total: 2112000, rev: 1920000, pb1: 192000, days: 180, minPT: 0 },
           { id: 'a3', group: 'All Club', name: '12 Bulan', total: 2838000, rev: 2580000, pb1: 258000, days: 360, minPT: 0 },
-          { id: 'a3_new', group: 'All Club', name: '12 Bulan', total: 3531000, rev: 3210000, pb1: 321000, days: 360, minPT: 0 }, // Tambahan Baru
+          { id: 'a3_new', group: 'All Club', name: '12+1 Bulan', total: 3075000, rev: 2795909, pb1: 279091, days: 390, minPT: 0 }, // Paket Baru
           { id: 'a4', group: 'All Club', name: '12+2 Bulan', total: 3619000, rev: 3290000, pb1: 329000, days: 420, minPT: 0 },
-          { id: 'a5', group: 'All Club', name: '12+1 Bulan', total: 3075000, rev: 2795909, pb1: 279091, days: 390, minPT: 0 },
 
           { id: 'b1', group: 'Bundling (With PT)', name: '3 Bulan', total: 660000, rev: 600000, pb1: 60000, days: 90, minPT: 24 },
           { id: 'b2', group: 'Bundling (With PT)', name: '6 Bulan', total: 1320000, rev: 1200000, pb1: 120000, days: 180, minPT: 24 },
@@ -216,78 +245,61 @@
           { id: 'p17', name: '100 Sesi', total: 17050000, rev: 15500000, pb1: 1550000, sessions: 100, validity: 410 },
         ];
 
-        // VARIABEL STATE
+        // State Toggles
         let showDiscount = false;
         let showRevenue = false;
         let showReceiptDetails = true;
         let rawDiscountValue = 0;
 
-        const el = {
-            checkMem: document.getElementById('checkMember'),
-            boxMem: document.getElementById('boxMember'),
-            selMem: document.getElementById('selectMember'),
-            infoMemMo: document.getElementById('infoMemberPerMonth'),
-            infoMemDays: document.getElementById('infoMemberDays'),
+        // Elements
+        const checkMember = document.getElementById('checkMember');
+        const boxMember = document.getElementById('boxMember');
+        const selectMember = document.getElementById('selectMember');
+        const infoMemberPerMonth = document.getElementById('infoMemberPerMonth');
+        const infoMemberDays = document.getElementById('infoMemberDays');
 
-            checkPT: document.getElementById('checkPT'),
-            boxPT: document.getElementById('boxPT'),
-            selPT1: document.getElementById('selectPT1'),
-            selPT2: document.getElementById('selectPT2'),
-            selPT3: document.getElementById('selectPT3'),
-            infoPTSess: document.getElementById('infoPTPerSession'),
-            infoPTTotSess: document.getElementById('infoPTTotalSessions'),
-            lockIcon: document.getElementById('lockIcon'),
-            warnBund: document.getElementById('warnBundling'),
+        const checkPT = document.getElementById('checkPT');
+        const boxPT = document.getElementById('boxPT');
+        const selectPT1 = document.getElementById('selectPT1');
+        const selectPT2 = document.getElementById('selectPT2');
+        const selectPT3 = document.getElementById('selectPT3');
+        const infoPTPerSession = document.getElementById('infoPTPerSession');
+        const infoPTTotalSessions = document.getElementById('infoPTTotalSessions');
+        const lockIcon = document.getElementById('lockIcon');
+        const warnBundling = document.getElementById('warnBundling');
 
-            btnDisc: document.getElementById('btnDiscount'),
-            boxDisc: document.getElementById('boxDiscount'),
-            arrDisc: document.getElementById('arrowDiscount'),
-            inpDisc: document.getElementById('inputDiscount'),
+        const btnDiscount = document.getElementById('btnDiscount');
+        const boxDiscount = document.getElementById('boxDiscount');
+        const arrowDiscount = document.getElementById('arrowDiscount');
+        const inputDiscount = document.getElementById('inputDiscount');
 
-            btnRec: document.getElementById('btnReceipt'),
-            boxRecDet: document.getElementById('boxReceiptDetails'),
-            arrRec: document.getElementById('arrowReceipt'),
-            borderRec: document.getElementById('borderReceipt'),
-            textGrand: document.getElementById('grandTotalText'),
-            textGrandMo: document.getElementById('grandTotalPerMonthText'),
+        const btnReceipt = document.getElementById('btnReceipt');
+        const boxReceiptDetails = document.getElementById('boxReceiptDetails');
+        const arrowReceipt = document.getElementById('arrowReceipt');
+        const borderReceipt = document.getElementById('borderReceipt');
+        const grandTotalText = document.getElementById('grandTotalText');
+        const grandTotalPerMonthText = document.getElementById('grandTotalPerMonthText');
 
-            btnRev: document.getElementById('btnRevenue'),
-            boxRev: document.getElementById('boxRevenue'),
-            arrRev: document.getElementById('arrowRevenue'),
-        };
+        const btnRevenue = document.getElementById('btnRevenue');
+        const boxRevenue = document.getElementById('boxRevenue');
+        const arrowRevenue = document.getElementById('arrowRevenue');
 
-        function formatRp(num) { 
-            return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(num); 
+        function formatRp(num) {
+            return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(num);
         }
 
-        // BIKIN OPSI MEMBERSHIP
-        function initMembershipOptions() {
-            el.selMem.innerHTML = '';
-            const groups = [...new Set(membershipPackages.map(p => p.group))];
-            groups.forEach(g => {
-                const optGroup = document.createElement('optgroup');
-                optGroup.label = g.toUpperCase();
-                membershipPackages.filter(p => p.group === g).forEach(p => {
-                    const opt = document.createElement('option');
-                    opt.value = p.id;
-                    opt.textContent = p.name;
-                    optGroup.appendChild(opt);
-                });
-                el.selMem.appendChild(optGroup);
-            });
-        }
-
-        // BIKIN OPSI PT
-        function initPTOptions(selectElem, minSessions = 0, addNone = false) {
-            if (!selectElem) return;
-            const current = selectElem.value;
+        // Inisialisasi Opsi PT
+        function populatePTOptions(selectElem, minSessions = 0, addNoneOption = false) {
+            const currentSelected = selectElem.value;
             selectElem.innerHTML = '';
-            if (addNone) {
+            
+            if (addNoneOption) {
                 const optNone = document.createElement('option');
                 optNone.value = 'none';
                 optNone.textContent = '-- Kosong --';
                 selectElem.appendChild(optNone);
             }
+
             const filtered = ptPackages.filter(p => p.sessions >= minSessions);
             filtered.forEach(p => {
                 const opt = document.createElement('option');
@@ -296,208 +308,224 @@
                 selectElem.appendChild(opt);
             });
 
-            if (selectElem.querySelector(`option[value="${current}"]`)) selectElem.value = current;
-            else if (!addNone && filtered.length > 0) selectElem.value = filtered[0].id;
-        }
-
-        // SETUP AWAL
-        initMembershipOptions();
-        initPTOptions(el.selPT1, 0, false);
-        initPTOptions(el.selPT2, 0, true);
-        initPTOptions(el.selPT3, 0, true);
-
-        // FUNGSI KALKULASI UTAMA (DILINDUNGI DARI ERROR)
-        function calcAll() {
-            try {
-                const isMem = el.checkMem.checked;
-                const actMem = membershipPackages.find(p => p.id === el.selMem.value) || membershipPackages[0];
-                const isBund = isMem && actMem.minPT > 0;
-
-                // Tampil/Sembunyi Membership
-                isMem ? el.boxMem.classList.remove('hidden') : el.boxMem.classList.add('hidden');
-
-                // Paksaan Bundling PT 1
-                if (isBund) {
-                    el.checkPT.checked = true;
-                    el.checkPT.disabled = true;
-                    el.lockIcon.classList.remove('hidden');
-                    el.warnBund.classList.remove('hidden');
-                    initPTOptions(el.selPT1, actMem.minPT, false);
-                } else {
-                    el.checkPT.disabled = false;
-                    el.lockIcon.classList.add('hidden');
-                    el.warnBund.classList.add('hidden');
-                    initPTOptions(el.selPT1, 0, false);
-                }
-
-                const isPT = el.checkPT.checked;
-                // Tampil/Sembunyi PT
-                isPT ? el.boxPT.classList.remove('hidden') : el.boxPT.classList.add('hidden');
-
-                let actPTs = [];
-                if (isPT) {
-                    const pt1 = ptPackages.find(p => p.id === el.selPT1.value);
-                    if (pt1) actPTs.push(pt1);
-                    const pt2 = ptPackages.find(p => p.id === el.selPT2.value);
-                    if (pt2 && el.selPT2.value !== 'none') actPTs.push(pt2);
-                    const pt3 = ptPackages.find(p => p.id === el.selPT3.value);
-                    if (pt3 && el.selPT3.value !== 'none') actPTs.push(pt3);
-                }
-
-                let pTotal = 0, pTotSess = 0, pTotVal = 0, pTotRev = 0, pTotPB1 = 0, ptGim = 0;
-                actPTs.forEach(pt => {
-                    pTotal += pt.total; pTotSess += pt.sessions; pTotVal += pt.validity; pTotRev += pt.rev; pTotPB1 += pt.pb1;
-                    const max = Math.max(...ptPackages.filter(p => p.name === pt.name).map(p => p.total));
-                    if (max > pt.total) ptGim += (max - pt.total);
-                });
-
-                // Pelindung assignment info element (Mencegah error Null)
-                if (isMem) {
-                    if(el.infoMemMo) el.infoMemMo.textContent = formatRp(actMem.total / (actMem.days / 30));
-                    if(el.infoMemDays) el.infoMemDays.textContent = actMem.days;
-                }
-                if (isPT && actPTs.length > 0) {
-                    let perSess = pTotSess > 0 ? (pTotal / pTotSess) : 0;
-                    if(el.infoPTSess) el.infoPTSess.textContent = formatRp(perSess);
-                    if(el.infoPTTotSess) el.infoPTTotSess.textContent = pTotSess;
-                }
-
-                // Gimmick
-                let memMax = actMem.total;
-                if (isMem) {
-                    const pkgs = membershipPackages.filter(p => p.name === actMem.name && p.group === actMem.group).map(p => p.total);
-                    if (pkgs.length > 0) memMax = Math.max(...pkgs);
-                }
-                const memGim = isMem && memMax > actMem.total ? memMax - actMem.total : 0;
-                const autoDisc = memGim + ptGim;
-
-                // Total
-                const mTot = isMem ? actMem.total : 0;
-                const sub = mTot + pTotal;
-                const grand = Math.max(0, sub - rawDiscountValue);
-
-                let effMo = 1;
-                if (isMem) effMo = actMem.days / 30;
-                else if (isPT && actPTs.length > 0) effMo = Math.max(1, Math.round(pTotVal / 30));
-                const gMo = grand > 0 ? grand / effMo : 0;
-
-                // Render Struk
-                el.boxRecDet.innerHTML = '';
-                if (showReceiptDetails) {
-                    if (isMem) {
-                        let gimHtml = memGim > 0 ? `<span class="text-slate-500 line-through text-[11px] mr-2">${formatRp(memMax)}</span>` : '';
-                        el.boxRecDet.innerHTML += `
-                            <div class="flex flex-col border-b border-slate-700/60 pb-4">
-                                <div class="flex justify-between items-start text-sm">
-                                    <div>
-                                        <span class="text-slate-300 font-semibold">• Membership: <span class="text-white">${actMem.name}</span></span>
-                                        <span class="block text-[11px] text-slate-500 mt-1 uppercase tracking-wider ml-3">Kategori: ${actMem.group}</span>
-                                    </div>
-                                    <div class="text-right flex items-center">${gimHtml}<span class="text-white font-bold text-base tracking-tight">${formatRp(actMem.total)}</span></div>
-                                </div>
-                            </div>`;
-                    }
-                    if (isPT && actPTs.length > 0) {
-                        let ptDet = '';
-                        actPTs.forEach(pt => {
-                            const mP = Math.max(...ptPackages.filter(p => p.name === pt.name).map(p => p.total));
-                            const hG = mP > pt.total;
-                            let gH = hG ? `<span class="text-slate-500 line-through text-[11px] mr-2">${formatRp(mP)}</span>` : '';
-                            ptDet += `
-                                <div class="flex justify-between items-center text-sm py-1">
-                                    <span class="text-slate-400 font-medium">- ${pt.name}</span>
-                                    <div class="text-right flex items-center">${gH}<span class="text-white font-bold tracking-tight">${formatRp(pt.total)}</span></div>
-                                </div>`;
-                        });
-                        el.boxRecDet.innerHTML += `
-                            <div class="flex flex-col border-b border-slate-700/60 pb-4">
-                                <span class="text-slate-300 text-sm font-semibold mb-2">• Personal Trainer (Mix ${pTotSess} Sesi):</span>
-                                <div class="ml-3 space-y-1">${ptDet}</div>
-                                <span class="block text-[11px] text-slate-500 mt-2 uppercase tracking-wider ml-3">Total Masa Aktif: ${pTotVal} Hari</span>
-                            </div>`;
-                    }
-                    if (autoDisc > 0) {
-                        el.boxRecDet.innerHTML += `<div class="mt-4 p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold text-center uppercase tracking-wide">✨ Promo Spesial: Hemat ${formatRp(autoDisc)}</div>`;
-                    }
-                    if (rawDiscountValue > 0) {
-                        el.boxRecDet.innerHTML += `<div class="flex justify-between items-center text-sm text-emerald-400 font-bold mt-4 pt-2"><span>Potongan Manual</span><span>- ${formatRp(rawDiscountValue)}</span></div>`;
-                    }
-                    if (!isMem && !isPT) el.boxRecDet.innerHTML = '<div class="text-slate-500 text-sm italic text-center py-2">Pilih paket untuk melihat rincian.</div>';
-                }
-
-                if(el.textGrand) el.textGrand.textContent = formatRp(grand);
-                if(el.textGrandMo) el.textGrandMo.textContent = grand > 0 ? `(Hanya ${formatRp(gMo)} / bln)` : '';
-
-                // Render Revenue
-                el.boxRev.innerHTML = '';
-                if (isMem) {
-                    el.boxRev.innerHTML += `
-                        <div class="p-4 bg-slate-50 rounded-xl border border-slate-100">
-                            <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-3">Membership</p>
-                            <div class="flex justify-between text-sm text-slate-700 mb-1.5"><span>Rev. Diterima:</span><span class="font-bold text-slate-900">${formatRp(actMem.rev)}</span></div>
-                            <div class="flex justify-between text-sm text-slate-700"><span>PB1:</span><span class="font-bold text-slate-900">${formatRp(actMem.pb1)}</span></div>
-                        </div>`;
-                }
-                if (isPT && actPTs.length > 0) {
-                    el.boxRev.innerHTML += `
-                        <div class="p-4 bg-slate-50 rounded-xl border border-slate-100">
-                            <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-3">Personal Trainer</p>
-                            <div class="flex justify-between text-sm text-slate-700 mb-1.5"><span>Rev. Diterima:</span><span class="font-bold text-slate-900">${formatRp(pTotRev)}</span></div>
-                            <div class="flex justify-between text-sm text-slate-700"><span>PB1:</span><span class="font-bold text-slate-900">${formatRp(pTotPB1)}</span></div>
-                        </div>`;
-                }
-                const rTot = (isMem ? actMem.rev : 0) + (isPT ? pTotRev : 0);
-                const pTaxTot = (isMem ? actMem.pb1 : 0) + (isPT ? pTotPB1 : 0);
-                el.boxRev.innerHTML += `
-                    <div class="mt-4 pt-4 border-t border-slate-200">
-                        <div class="flex justify-between text-[15px] text-indigo-600 font-extrabold mb-1"><span>Total Target Revenue:</span><span>${formatRp(rTot)}</span></div>
-                        <div class="flex justify-between text-sm text-slate-500 font-semibold"><span>Total Target PB1:</span><span>${formatRp(pTaxTot)}</span></div>
-                    </div>`;
-                if (rawDiscountValue > 0) el.boxRev.innerHTML += `<p class="text-[11px] text-rose-500 mt-3 font-medium text-center bg-rose-50 p-2 rounded-lg">*Total penerimaan akan dikurangi diskon manual sebesar ${formatRp(rawDiscountValue)}.</p>`;
-
-            } catch (err) {
-                console.error("Terjadi kesalahan sistem:", err);
+            if (selectElem.querySelector(`option[value="${currentSelected}"]`)) {
+                selectElem.value = currentSelected;
+            } else if (!addNoneOption && filtered.length > 0) {
+                selectElem.value = filtered[0].id;
             }
         }
 
-        // --- EVENT BINDING ---
-        el.checkMem.addEventListener('change', calcAll);
-        el.selMem.addEventListener('change', calcAll);
-        el.checkPT.addEventListener('change', calcAll);
-        el.selPT1.addEventListener('change', calcAll);
-        el.selPT2.addEventListener('change', calcAll);
-        el.selPT3.addEventListener('change', calcAll);
+        populatePTOptions(selectPT1, 0, false);
+        populatePTOptions(selectPT2, 0, true);
+        populatePTOptions(selectPT3, 0, true);
 
-        el.btnDisc.addEventListener('click', () => {
+        function calculateAll() {
+            const isMemberActive = checkMember.checked;
+            const activeMem = membershipPackages.find(p => p.id === selectMember.value) || membershipPackages[0];
+            const isBundling = isMemberActive && activeMem.minPT > 0;
+
+            boxMember.style.display = isMemberActive ? 'block' : 'none';
+
+            // Logika Paksaan Bundling
+            if (isBundling) {
+                checkPT.checked = true;
+                checkPT.disabled = true;
+                lockIcon.classList.remove('hidden');
+                warnBundling.classList.remove('hidden');
+                populatePTOptions(selectPT1, activeMem.minPT, false);
+            } else {
+                checkPT.disabled = false;
+                lockIcon.classList.add('hidden');
+                warnBundling.classList.add('hidden');
+                populatePTOptions(selectPT1, 0, false);
+            }
+
+            const isPTActive = checkPT.checked;
+            boxPT.style.display = isPTActive ? 'block' : 'none';
+
+            let activePTs = [];
+            if (isPTActive) {
+                const pt1 = ptPackages.find(p => p.id === selectPT1.value);
+                if (pt1) activePTs.push(pt1);
+                
+                const pt2 = ptPackages.find(p => p.id === selectPT2.value);
+                if (pt2 && selectPT2.value !== 'none') activePTs.push(pt2);
+                
+                const pt3 = ptPackages.find(p => p.id === selectPT3.value);
+                if (pt3 && selectPT3.value !== 'none') activePTs.push(pt3);
+            }
+
+            let ptTotal = 0, ptTotalSessions = 0, ptTotalValidity = 0, ptTotalRev = 0, ptTotalPB1 = 0, ptGimmickDiff = 0;
+
+            activePTs.forEach(pt => {
+                ptTotal += pt.total;
+                ptTotalSessions += pt.sessions;
+                ptTotalValidity += pt.validity;
+                ptTotalRev += pt.rev;
+                ptTotalPB1 += pt.pb1;
+
+                const samePkgs = ptPackages.filter(p => p.name === pt.name).map(p => p.total);
+                const maxPrice = Math.max(...samePkgs);
+                if (maxPrice > pt.total) ptGimmickDiff += (maxPrice - pt.total);
+            });
+
+            if (isMemberActive) {
+                infoMemberPerMonth.textContent = formatRp(activeMem.total / (activeMem.days / 30));
+                infoMemberDays.textContent = activeMem.days;
+            }
+            if (isPTActive && activePTs.length > 0) {
+                infoPTPerSession.textContent = formatRp(ptTotal / ptTotalSessions);
+                infoPTTotalSessions.textContent = ptTotalSessions;
+            }
+
+            // Gimmick Diskon Membership
+            let memMaxPrice = activeMem.total;
+            if (isMemberActive) {
+                const samePkgs = membershipPackages.filter(p => p.name === activeMem.name && p.group === activeMem.group).map(p => p.total);
+                memMaxPrice = Math.max(...samePkgs);
+            }
+
+            const memGimmickDiff = isMemberActive && (memMaxPrice > activeMem.total) ? memMaxPrice - activeMem.total : 0;
+            const totalAutoDiscount = memGimmickDiff + ptGimmickDiff;
+
+            const mTotal = isMemberActive ? activeMem.total : 0;
+            const subTotal = mTotal + ptTotal;
+            const grandTotal = Math.max(0, subTotal - rawDiscountValue);
+
+            let effectiveMonths = 1;
+            if (isMemberActive) effectiveMonths = activeMem.days / 30;
+            else if (isPTActive && activePTs.length > 0) effectiveMonths = Math.max(1, Math.round(ptTotalValidity / 30));
+            const grandTotalPerMonth = grandTotal > 0 ? grandTotal / effectiveMonths : 0;
+
+            // STRUK PEMBAYARAN
+            boxReceiptDetails.innerHTML = '';
+            if (showReceiptDetails) {
+                if (isMemberActive) {
+                    let gimmickHTML = memGimmickDiff > 0 ? `<span class="text-slate-500 line-through text-xs">${formatRp(memMaxPrice)}</span>` : '';
+                    boxReceiptDetails.innerHTML += `
+                        <div class="flex flex-col border-b border-slate-700 pb-3">
+                            <div class="flex justify-between items-center text-sm">
+                                <span class="text-slate-300">• Membership: <span class="font-medium text-white">${activeMem.name}</span></span>
+                                <div class="text-right flex items-center gap-2">${gimmickHTML}<span class="text-white font-medium">${formatRp(activeMem.total)}</span></div>
+                            </div>
+                            <div class="mt-1 ml-3"><span class="inline-block px-2 py-1 bg-slate-700/50 border border-slate-600 text-slate-300 rounded text-xs">Kategori: ${activeMem.group}</span></div>
+                        </div>`;
+                }
+                
+                if (isPTActive && activePTs.length > 0) {
+                    let ptDetailsHTML = '';
+                    activePTs.forEach(pt => {
+                        const maxP = Math.max(...ptPackages.filter(p => p.name === pt.name).map(p => p.total));
+                        const hasGim = maxP > pt.total;
+                        let gHTML = hasGim ? `<span class="text-slate-500 line-through text-xs">${formatRp(maxP)}</span>` : '';
+                        
+                        ptDetailsHTML += `
+                            <div class="flex justify-between items-center text-sm">
+                                <span class="text-slate-400">- ${pt.name}</span>
+                                <div class="text-right flex items-center gap-2">${gHTML}<span class="text-white font-medium">${formatRp(pt.total)}</span></div>
+                            </div>
+                        `;
+                    });
+
+                    boxReceiptDetails.innerHTML += `
+                        <div class="flex flex-col">
+                            <span class="text-slate-300 text-sm mb-2">• Personal Trainer (Total ${ptTotalSessions} Sesi):</span>
+                            <div class="space-y-2 ml-3">${ptDetailsHTML}</div>
+                            <div class="mt-2 ml-3"><span class="inline-block px-2 py-1 bg-slate-700/50 border border-slate-600 text-slate-300 rounded text-xs">Masa Aktif: ${ptTotalValidity} Hari</span></div>
+                        </div>`;
+                }
+
+                if (totalAutoDiscount > 0) {
+                    boxReceiptDetails.innerHTML += `
+                        <div class="mt-3 mb-2 p-2 rounded-lg bg-emerald-500/20 border border-emerald-500/30 flex items-center text-emerald-400 text-sm font-medium">
+                            ✨ Anda Hemat ${formatRp(totalAutoDiscount)} (Promo Harga Spesial!)
+                        </div>`;
+                }
+                if (rawDiscountValue > 0) {
+                    boxReceiptDetails.innerHTML += `
+                        <div class="flex justify-between items-center text-sm text-emerald-400 font-bold mt-4 pt-3 border-t border-slate-700">
+                            <span>Potongan Manual Tambahan</span>
+                            <span>- ${formatRp(rawDiscountValue)}</span>
+                        </div>`;
+                }
+                if (!isMemberActive && !isPTActive) {
+                    boxReceiptDetails.innerHTML = '<div class="text-slate-400 text-sm italic">Belum ada paket yang dipilih.</div>';
+                }
+            }
+
+            grandTotalText.textContent = formatRp(grandTotal);
+            grandTotalPerMonthText.textContent = grandTotal > 0 ? `(Jatuhnya ${formatRp(grandTotalPerMonth)} / bln)` : '';
+
+            // REVENUE INTERNAL
+            boxRevenue.innerHTML = '';
+            if (isMemberActive) {
+                boxRevenue.innerHTML += `
+                    <div>
+                        <p class="text-xs font-bold text-slate-400 uppercase tracking-wider border-b pb-1 mb-2">Data Membership</p>
+                        <div class="flex justify-between text-sm text-slate-700 mb-1"><span>Revenue Diterima:</span><span class="font-medium">${formatRp(activeMem.rev)}</span></div>
+                        <div class="flex justify-between text-sm text-slate-700"><span>Penyesuaian PB1:</span><span className="font-medium">${formatRp(activeMem.pb1)}</span></div>
+                    </div>`;
+            }
+            if (isPTActive && activePTs.length > 0) {
+                boxRevenue.innerHTML += `
+                    <div>
+                        <p class="text-xs font-bold text-slate-400 uppercase tracking-wider border-b pb-1 mb-2">Data Personal Trainer (Mix ${activePTs.length} Paket)</p>
+                        <div class="flex justify-between text-sm text-slate-700 mb-1"><span>Revenue Diterima:</span><span class="font-medium">${formatRp(ptTotalRev)}</span></div>
+                        <div class="flex justify-between text-sm text-slate-700"><span>Penyesuaian PB1:</span><span class="font-medium">${formatRp(ptTotalPB1)}</span></div>
+                    </div>`;
+            }
+            
+            const rTotal = (isMemberActive ? activeMem.rev : 0) + (isPTActive ? ptTotalRev : 0);
+            const pTaxTotal = (isMemberActive ? activeMem.pb1 : 0) + (isPTActive ? ptTotalPB1 : 0);
+            boxRevenue.innerHTML += `
+                <div class="mt-4 pt-3 border-t border-slate-200">
+                    <div class="flex justify-between text-sm text-indigo-700 font-bold mb-1"><span>Total Target Revenue:</span><span>${formatRp(rTotal)}</span></div>
+                    <div class="flex justify-between text-sm text-slate-500 font-medium"><span>Total Target PB1:</span><span>${formatRp(pTaxTotal)}</span></div>
+                </div>`;
+            if (rawDiscountValue > 0) {
+                boxRevenue.innerHTML += `<p class="text-xs text-rose-500 mt-2 italic text-center">*Potongan manual Rp ${rawDiscountValue.toLocaleString('id-ID')} akan mengurangi penerimaan.</p>`;
+            }
+        }
+
+        // EVENT LISTENERS
+        checkMember.addEventListener('change', calculateAll);
+        selectMember.addEventListener('change', calculateAll);
+        
+        checkPT.addEventListener('change', calculateAll);
+        selectPT1.addEventListener('change', calculateAll);
+        selectPT2.addEventListener('change', calculateAll);
+        selectPT3.addEventListener('change', calculateAll);
+
+        btnDiscount.addEventListener('click', () => {
             showDiscount = !showDiscount;
-            showDiscount ? el.boxDisc.classList.remove('hidden') : el.boxDisc.classList.add('hidden');
-            el.arrDisc.textContent = showDiscount ? '▲' : '▼';
-            if (!showDiscount) { el.inpDisc.value = ''; rawDiscountValue = 0; calcAll(); }
+            boxDiscount.style.display = showDiscount ? 'block' : 'none';
+            arrowDiscount.textContent = showDiscount ? '▲' : '▼';
+            if (!showDiscount) {
+                inputDiscount.value = '';
+                rawDiscountValue = 0;
+                calculateAll();
+            }
         });
 
-        el.inpDisc.addEventListener('input', (e) => {
-            const c = e.target.value.replace(/[^0-9]/g, '');
-            rawDiscountValue = c ? parseInt(c, 10) : 0;
-            if(isNaN(rawDiscountValue)) rawDiscountValue = 0;
-            e.target.value = c ? rawDiscountValue.toLocaleString('id-ID') : '';
-            calcAll();
+        inputDiscount.addEventListener('input', (e) => {
+            const cleanVal = e.target.value.replace(/[^0-9]/g, '');
+            rawDiscountValue = cleanVal ? parseInt(cleanVal, 10) : 0;
+            e.target.value = cleanVal ? rawDiscountValue.toLocaleString('id-ID') : '';
+            calculateAll();
         });
 
-        el.btnRec.addEventListener('click', () => {
+        btnReceipt.addEventListener('click', () => {
             showReceiptDetails = !showReceiptDetails;
-            el.arrRec.textContent = showReceiptDetails ? '▲' : '▼';
-            showReceiptDetails ? el.boxRecDet.classList.remove('hidden') : el.boxRecDet.classList.add('hidden');
-            el.borderRec.className = showReceiptDetails ? "mt-6 pt-6 border-t border-slate-700/80" : "mt-6 pt-2";
-            calcAll();
+            arrowReceipt.textContent = showReceiptDetails ? '▲' : '▼';
+            borderReceipt.className = showReceiptDetails ? "border-t border-slate-600 pt-4" : "pt-4";
+            calculateAll();
         });
 
-        el.btnRev.addEventListener('click', () => {
+        btnRevenue.addEventListener('click', () => {
             showRevenue = !showRevenue;
-            showRevenue ? el.boxRev.classList.remove('hidden') : el.boxRev.classList.add('hidden');
-            el.arrRev.textContent = showRevenue ? '▲' : '▼';
+            boxRevenue.style.display = showRevenue ? 'block' : 'none';
+            arrowRevenue.textContent = showRevenue ? '▲' : '▼';
         });
-
-        calcAll();
     </script>
 </body>
 </html>
