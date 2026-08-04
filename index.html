@@ -224,6 +224,9 @@
 
         function checkPassword() {
             if (inputPassword.value === PASSWORD_BENAR) {
+                // Simpan status login di memori browser agar tidak perlu login lagi
+                localStorage.setItem('willfitness_auth_premium', 'true');
+
                 // Sembunyikan layar kunci, tampilkan aplikasi
                 lockScreen.classList.add('hidden');
                 mainApp.classList.remove('hidden');
@@ -603,6 +606,15 @@
         // Setup awal saat baru dibuka (di belakang layar kunci)
         initMembershipOptions();
         if(initialPT1) updateSelectOptions(initialPT1, 0);
+
+        // ==================== CEK STATUS LOGIN ====================
+        // Jika sudah pernah login sebelumnya, langsung buka aplikasinya
+        if (localStorage.getItem('willfitness_auth_premium') === 'true') {
+            lockScreen.classList.add('hidden');
+            mainApp.classList.remove('hidden');
+            revenueApp.classList.remove('hidden');
+            calcAll(); 
+        }
 
     </script>
 </body>
